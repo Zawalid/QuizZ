@@ -1,5 +1,19 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import he from "he";
+import { nanoid } from "nanoid";
+
+async function getQuizData({ category, difficulty, questionsNumber, type }) {
+  const response = await fetch(
+    `https://opentdb.com/api.php?amount=${questionsNumber}&category=${
+      category === "any" ? "" : category
+    }&difficulty=${difficulty === "any" ? "" : difficulty}&type=${
+      type === "any" ? "" : type
+    }`
+  );
+  const data = await response.json();
+  console.log(data);
+  return data.results;
+}
 const categories = [
   { id: 9, name: "General Knowledge" },
   { id: 14, name: "Entertainment: Television" },
@@ -13,39 +27,10 @@ const categories = [
   { id: 21, name: "Sports" },
   { id: 23, name: "History" },
 ];
-const questionsSample = [
-  "In past times, what would a gentleman keep in his fob pocket?",
-  "When was &quot;YouTube&quot; founded?",
-  "Which one of the following rhythm games was made by Harmonix?",
-  "Which of these is the name of a Japanese system of…e, literally meaning &quot;finger pressure&quot;?",
-  "What is the romanized Russian word for &quot;winter&quot;?",
-  "What is the name of Poland in Polish?",
-  "How tall is the Burj Khalifa?",
-  "Where did the pineapple plant originate?",
-  "When someone is inexperienced they are said to be what color?",
-  "What is the French word for &quot;fish&quot;?",
-];
-const answersSample = [
-  ["Money", "Keys", "Notebook", "Watch"],
-  ["May 22, 2004", "September 12, 2005", "July 19, 2009", "February 14, 2005"],
-  [
-    "Meat Beat Mania",
-    "Guitar Hero Live",
-    "Dance Dance Revolution",
-    "Rock Band",
-  ],
-  ["Ukiyo", "Majime", "Ikigai", "Shiatsu"],
-  ["Leto", "Vesna", "Osen&#039;", "Zima"],
-  ["Pupcia", "Polszka", "P&oacute;land", "Polska"],
-  ["2,717 ft", "2,546 ft", "3,024 ft", "2,722 ft"],
-  ["Hawaii", "Europe", "Asia", "South America"],
-  ["Red", "Blue", "Yellow", "Green"],
-  ["fiche", "escargot", "mer", "poisson"],
-];
 function Button({ children, onclick }) {
   return (
     <button
-      className="px-5 py-2 w-40 font-bold text-lg cursor-pointer rounded-2xl bg-primary outline-primary text-white "
+      className="px-5 py-3 w-44 mx-auto font-bold text-lg cursor-pointer rounded-2xl bg-primary outline-primary text-white "
       onClick={onclick}
     >
       {children}
@@ -55,16 +40,93 @@ function Button({ children, onclick }) {
 
 export default function App() {
   const [settingsOpen, setSettingsOpen] = useState(false);
-  function toggleSettings() {
-    setSettingsOpen((so) => !so);
+  const [quizStarted, setQuizStarted] = useState(false);
+  const [quizData, setQuizData] = useState([]);
+  const [category, setCategory] = useState("any");
+  const [difficulty, setDifficulty] = useState("any");
+  const [questionsNumber, setQuestionsNumber] = useState(20);
+  const [type, setType] = useState("any");
+  const [isSaved, setIsSaved] = useState(true);
+
+  useEffect(() => {
+    isSaved &&
+      getQuizData({
+        category,
+        difficulty,
+        questionsNumber,
+        type,
+      }).then((data) => {
+        console.log(data);
+        setIsSaved(false);
+        if (data.length === 0) {
+          setQuizData([]);
+          return;
+        }
+        setQuizData(data);
+      });
+  }, [category, difficulty, questionsNumber, type, isSaved]);
+
+  function handleSave() {
+    setIsSaved(true);
+    setQuizStarted(false);
+    setSettingsOpen(false);
   }
+  const questions = quizData.map((question) => he.decode(question.question));
+  let answers = quizData.map((question) => {
+    const randomIndex = Math.floor(
+      Math.random() * (question.incorrect_answers.length + 1)
+    );
+    const answers =
+      question.incorrect_answers.length === 1
+        ? ["True", "False"]
+        : [
+            ...question.incorrect_answers.slice(0, randomIndex),
+            question.correct_answer,
+            ...question.incorrect_answers.slice(randomIndex),
+          ];
+
+    return answers.map((answer) => he.decode(answer));
+  });
+  answers = answers.map((answer) =>
+    answer.map((answer) => {
+      return {
+        id: nanoid(),
+        answer,
+      };
+    })
+  );
+
   return (
     <div className="container mx-auto relative py-4 px-8 h-full grid grid-rows-[36px_1fr]">
       <Header>
-        <SettingsButton onToggleSettings={toggleSettings} />
+        <SettingsButton onToggleSettings={() => setSettingsOpen((so) => !so)} />
       </Header>
-      <Quiz />
-      <Settings active={settingsOpen} />
+      {quizStarted ? (
+        <Quiz quizData={quizData} questions={questions} answers={answers} />
+      ) : (
+        <HeroSection>
+          <Button onclick={() => setQuizStarted(true)}>
+            <i className="fa-solid fa-play text-xl mr-4"></i>
+            Start Quiz
+          </Button>
+        </HeroSection>
+      )}
+      <Settings
+        active={settingsOpen}
+        category={category}
+        setCategory={setCategory}
+        difficulty={difficulty}
+        setDifficulty={setDifficulty}
+        questionsNumber={questionsNumber}
+        setQuestionsNumber={setQuestionsNumber}
+        type={type}
+        setType={setType}
+      >
+        <Button onclick={handleSave}>
+          <i className="fa-regular fa-floppy-disk text-xl mr-4"></i>
+          Save
+        </Button>
+      </Settings>
     </div>
   );
 }
@@ -111,59 +173,78 @@ function SettingsButton({ onToggleSettings }) {
   );
 }
 // Hero Section
-function HeroSection() {
+function HeroSection({ children }) {
   return (
     <div className="grid place-content-center place-items-center gap-24">
       <h1 className="text-5xl text-center font-bold text-light-text leading-normal w-11/12 dark:text-dark-text">
         Welcome to <span className="text-primary">QuizZ</span>, Your Gateway to
         Knowledge and Fun!
       </h1>
-      <Button>Get Started</Button>
+      {children}
     </div>
   );
 }
 
 // Quiz Section
-function Quiz() {
-  const [questions, setQuestions] = useState(questionsSample);
+function Quiz({ quizData, questions, answers }) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [quizCompleted, setQuizCompleted] = useState(false);
+  const [isAnswered, setIsAnswered] = useState(false);
+  const [correctQuestions, setCorrectQuestions] = useState(0);
 
-  const [answers, setAnswers] = useState(answersSample);
+  const correctAnswer =
+    !quizCompleted &&
+    quizData.length > 0 &&
+    he.decode(quizData[currentQuestion]?.correct_answer);
 
   function handleAnswer(answer) {
+    answer === correctAnswer && setCorrectQuestions((ca) => ca + 1);
+    setIsAnswered(true);
     setTimeout(() => {
-      // setCurrentQuestion((cq) => cq < questions.length - 1 && cq + 1);
+      setIsAnswered(false);
+      setCurrentQuestion((cq) => cq < questions.length - 1 && cq + 1);
       if (currentQuestion === questions.length - 1) {
         setQuizCompleted(true);
       }
-    }, 3000);
+    }, 2000);
   }
   function handleRetry() {
     setQuizCompleted(false);
     setCurrentQuestion(0);
+    setCorrectQuestions(0);
   }
 
   return (
     <div className="flex flex-col items-center justify-evenly place-content-center mx-auto w-3/4">
-      {quizCompleted ? (
-        <QuizCompleted>
+      {quizData.length === 0 ? (
+        <h1 className="text-5xl text-center font-bold text-light-text leading-normal w-11/12 dark:text-dark-text">
+          No Questions Found, Please Change Your Settings and Try Again
+        </h1>
+      ) : quizCompleted ? (
+        <QuizCompleted
+          totalQuestions={questions.length}
+          correctQuestions={correctQuestions}
+        >
           <Button onclick={handleRetry}>
             <i className="fa-solid fa-redo-alt text-xl mr-2"></i> Try Again
           </Button>
         </QuizCompleted>
       ) : (
         <>
-          <ProgressBar />
-          <Question question={he.decode(questions[currentQuestion])} />
+          <ProgressBar
+            totalQuestions={questions.length}
+            currentQuestion={currentQuestion}
+          />
+          <Question question={questions[currentQuestion]} />
           <AnswersList>
-            {answers[currentQuestion].map((answer) => (
+            {answers[currentQuestion]?.map((answer) => (
               <Answer
-                key={answer}
-                correctAnswer={answers[currentQuestion][3]}
+                key={answer.id}
+                correctAnswer={correctAnswer}
                 onAnswer={handleAnswer}
+                isAnswered={isAnswered}
               >
-                {answer}
+                {answer.answer}
               </Answer>
             ))}
           </AnswersList>
@@ -189,66 +270,100 @@ function Answer({
   children = "something went wrong",
   onAnswer,
   correctAnswer,
+  isAnswered,
 }) {
-  const [isCorrect, setIsCorrect] = useState(false);
-  const [isAnswered, setIsAnswered] = useState(false);
+  const correct = children === correctAnswer;
+  const [isCurrentAnswer, setIsCurrentAnswer] = useState(false);
   return (
     <button
-      // : currentAnswer && !isIncorrect
-      // ? "bg-light-incorrect dark:bg-dark-incorrect text-white"
       className={
         "px-5 py-3 w-3/4 font-bold text-lg text-start cursor-pointer rounded-xl flex justify-between items-center  " +
-        (isAnswered
+        (isAnswered && correct
           ? "bg-light-correct dark:bg-dark-correct text-white"
+          : isCurrentAnswer && !correct
+          ? "bg-light-incorrect dark:bg-dark-incorrect text-white"
           : "bg-light-secondary dark:bg-dark-secondary text-light-text-2 dark:text-dark-text-2 ")
       }
       onClick={() => {
-        setIsAnswered(true);
-        setIsCorrect(children === correctAnswer);
-        onAnswer(children);
+        if (!isAnswered) {
+          onAnswer(children);
+          setIsCurrentAnswer(true);
+        }
       }}
     >
       {children}
-      {isAnswered && (
+      {isAnswered && correct && (
         <i className="fa-regular fa-circle-check text-2xl text-white"></i>
       )}
-      {/* {currentAnswer && !isIncorrect && (
+      {isCurrentAnswer && !correct && (
         <i className="fa-regular fa-circle-xmark text-2xl text-white"></i>
-      )} */}
+      )}
     </button>
   );
 }
-function ProgressBar() {
+function ProgressBar({ totalQuestions, currentQuestion }) {
+  const percentage = Math.round(((currentQuestion + 1) / totalQuestions) * 100);
+
   return (
     <div
       className="flex w-full gap-3 items-center
     "
     >
-      <div className="w-full h-[5px] rounded-lg bg-light-secondary dark:bg-dark-secondary  relative before:absolute before:inset-0  before:rounded-lg before:w-1/2 before:bg-primary"></div>
-      <Progress />
+      <div className="w-full h-[5px] rounded-lg bg-light-secondary dark:bg-dark-secondary  relative">
+        <div
+          className="absolute inset-0  rounded-lg transition-[width] duration-1000 bg-primary"
+          style={{ width: `${percentage}%` }}
+        ></div>
+      </div>
+      <Progress
+        totalQuestions={totalQuestions}
+        currentQuestion={currentQuestion}
+      />
     </div>
   );
 }
-function Progress() {
+function Progress({ totalQuestions, currentQuestion }) {
   return (
     <span className="font-bold text-lg dark:text-dark-text text-light-text">
-      1/20
+      {currentQuestion + 1}/{totalQuestions}
     </span>
   );
 }
 // Quiz completed section
-function QuizCompleted({ children }) {
+function QuizCompleted({ children, totalQuestions, correctQuestions }) {
+  const percentage = Math.round((correctQuestions / totalQuestions) * 100);
   return (
     <>
-      <h1 className="text-5xl text-center font-bold text-light-text leading-normal w-11/12 dark:text-dark-text">
-        Congratulations!
-      </h1>
-      <Stats />
+      <Message percentage={percentage} />
+      <Stats
+        totalQuestions={totalQuestions}
+        correctQuestions={correctQuestions}
+        percentage={percentage}
+      />
       {children}
     </>
   );
 }
-function Stats() {
+function Message({ percentage }) {
+  const scoreMessages = [
+    { maxScore: 20, message: "Stay curious, keep learning!" },
+    { maxScore: 40, message: "Progress is progress! Keep it up." },
+    { maxScore: 60, message: "You're on the right track, keep going!" },
+    { maxScore: 80, message: "Impressive work, keep challenging yourself!" },
+    { maxScore: 100, message: "Fantastic! You've mastered this quiz!" },
+  ];
+  return (
+    <h1 className="text-5xl text-center font-bold text-light-text leading-normal w-11/12 dark:text-dark-text">
+      {
+        scoreMessages.find(
+          (scoreMessage) => percentage <= scoreMessage.maxScore
+        ).message
+      }
+    </h1>
+  );
+}
+function Stats({ totalQuestions, correctQuestions, percentage }) {
+  const incorrectQuestions = totalQuestions - correctQuestions;
   return (
     <div className="flex flex-col gap-5 bg-light-secondary dark:bg-dark-secondary p-8 rounded-2xl w-4/5">
       <div className="flex justify-between mb-6">
@@ -256,7 +371,7 @@ function Stats() {
           Your Score
         </h3>
         <span className="text-3xl font-bold text-light-text dark:text-dark-text">
-          15/20
+          {percentage}%
         </span>
       </div>
       <div className="flex justify-between">
@@ -264,7 +379,7 @@ function Stats() {
           Total Questions
         </h3>
         <span className="text-xl font-bold text-light-text-2 dark:text-dark-text-2">
-          20
+          {totalQuestions}
         </span>
       </div>
       <div className="flex justify-between">
@@ -272,7 +387,7 @@ function Stats() {
           Correct
         </h3>
         <span className="text-xl font-bold text-light-text-2 dark:text-dark-text-2">
-          14
+          {correctQuestions}
         </span>
       </div>
       <div className="flex justify-between">
@@ -280,7 +395,7 @@ function Stats() {
           Incorrect
         </h3>
         <span className="text-xl font-bold text-light-text-2 dark:text-dark-text-2">
-          6
+          {incorrectQuestions}
         </span>
       </div>
     </div>
@@ -288,12 +403,18 @@ function Stats() {
 }
 
 // Settings Section
-function Settings({ active }) {
-  const [categorie, setCategorie] = useState("any");
-  const [difficulty, setDifficulty] = useState("any");
-  const [questionsNumber, setQuestionsNumber] = useState(20);
-  const [type, setType] = useState("any");
-
+function Settings({
+  active,
+  category,
+  setCategory,
+  difficulty,
+  setDifficulty,
+  questionsNumber,
+  setQuestionsNumber,
+  type,
+  setType,
+  children,
+}) {
   return (
     <div
       className={
@@ -302,17 +423,17 @@ function Settings({ active }) {
       }
     >
       <div className="flex flex-col w-3/4">
-        <h1 className="text-5xl mb-14 text-start font-bold text-light-text leading-normal dark:text-dark-text">
+        <h1 className="text-5xl text-start font-bold text-light-text leading-normal dark:text-dark-text">
           Settings
         </h1>
-        <form className="grid grid-cols-[1fr_300px] gap-6 w-full">
+        <form className="grid my-14  grid-cols-[1fr_300px] gap-6 w-full">
           <label className="text-xl font-bold text-light-text dark:text-dark-text">
             Category
           </label>
           <select
             className="cursor-pointer text-center text-xl font-bold text-light-text dark:text-dark-text bg-light-secondary dark:bg-dark-secondary rounded-lg py-2 px-5 focus:outline-none"
-            value={categorie}
-            onChange={(e) => setCategorie(e.target.value)}
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
           >
             <option value="any">Any Category</option>
             {categories.map((category) => (
@@ -361,22 +482,8 @@ function Settings({ active }) {
             <option value="boolean">True / False</option>
           </select>
         </form>
+        {children}
       </div>
     </div>
   );
 }
-
-const a = async () => {
-  const response = await fetch(
-    "https://opentdb.com/api.php?amount=10&category=9&difficulty=&type=multiple"
-  );
-  const data = await response.json();
-  console.log(data);
-  console.log(data.results.map((question) => question.question));
-  console.log(
-    data.results.map((question) => [
-      ...question.incorrect_answers,
-      question.correct_answer,
-    ])
-  );
-};
