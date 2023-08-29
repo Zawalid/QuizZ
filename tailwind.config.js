@@ -21,6 +21,10 @@ module.exports = {
         "dark-correct": "#008000",
         "dark-incorrect": "#FF0000",
       },
+      animation : {
+        "bounce-200" : "bounce 1s infinite 200ms",
+        "bounce-400" : "bounce 1s infinite 400ms",
+      }
     },
   },
   plugins: [],
