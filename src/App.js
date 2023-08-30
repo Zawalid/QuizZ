@@ -727,15 +727,15 @@ function Settings({
   return (
     <div
       className={
-        "fixed left-0 flex h-full w-full items-center justify-center bg-light-background dark:bg-dark-background  " +
+        "fixed left-0 top-0 flex h-full w-full items-center justify-center bg-light-background pb-5 pt-20 dark:bg-dark-background  " +
         (active ? "z-10 opacity-100" : "-z-10 opacity-0")
       }
     >
-      <div className="flex w-3/4 flex-col  gap-5 max-md:w-full max-md:px-4">
-        <h1 className="text-start text-5xl font-bold leading-normal text-light-text dark:text-dark-text max-md:text-4xl">
+      <div className="flex h-full w-3/4 flex-col justify-between gap-5 max-md:w-full max-md:px-4">
+        <h1 className="text-start  text-5xl font-bold leading-normal text-light-text dark:text-dark-text max-md:text-4xl">
           Settings
         </h1>
-        <div className="h-[400px] overflow-y-auto py-5 pe-5">
+        <div className="h-auto overflow-y-auto py-5 pe-5">
           <h2 className="mb-8 text-2xl font-bold text-light-text-2 dark:text-dark-text-2">
             Quiz Options
           </h2>
