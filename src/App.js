@@ -569,9 +569,7 @@ function QuestionTimer({ questionTime, isTimerPaused, onPause }) {
 }
 function ActionButtons({ children }) {
   return (
-    <div className="flex gap-10 max-md:w-full max-md:flex-col max-md:gap-5">
-      {children}
-    </div>
+    <div className="flex gap-10 max-md:w-full  max-md:gap-5">{children}</div>
   );
 }
 function Hint({ hintsNumber = "0", onclick }) {
@@ -741,7 +739,7 @@ function Settings({
           <h2 className="mb-8 text-2xl font-bold text-light-text-2 dark:text-dark-text-2">
             Quiz Options
           </h2>
-          <form className="grid w-full grid-cols-[1fr_300px] gap-6 ps-5">
+          <form className="grid w-full grid-cols-[1fr_300px] gap-6 ps-5 max-sm:grid-cols-[1fr_minmax(150px,300px)]">
             <label className="text-xl font-bold text-light-text dark:text-dark-text">
               Category
             </label>
@@ -826,7 +824,9 @@ function Settings({
                 min={5}
                 max={60}
                 value={easyTime}
-                onChange={(e) => setEasyTime(e.target.value)}
+                onChange={(e) =>
+                  setEasyTime(e.target.value > 60 ? 60 : e.target.value)
+                }
                 className="rounded-lg bg-light-secondary px-5 py-2 text-center text-xl font-bold text-light-text focus:outline-none dark:bg-dark-secondary dark:text-dark-text "
               />
               <input
@@ -834,7 +834,9 @@ function Settings({
                 min={10}
                 max={90}
                 value={mediumTime}
-                onChange={(e) => setMediumTime(e.target.value)}
+                onChange={(e) =>
+                  setMediumTime(e.target.value > 90 ? 90 : e.target.value)
+                }
                 className="rounded-lg bg-light-secondary px-5 py-2 text-center text-xl font-bold text-light-text focus:outline-none dark:bg-dark-secondary dark:text-dark-text "
               />
               <input
@@ -842,7 +844,9 @@ function Settings({
                 min={20}
                 max={120}
                 value={hardTime}
-                onChange={(e) => setHardTime(e.target.value)}
+                onChange={(e) =>
+                  setHardTime(e.target.value > 120 ? 120 : e.target.value)
+                }
                 className="rounded-lg bg-light-secondary px-5 py-2 text-center text-xl font-bold text-light-text focus:outline-none dark:bg-dark-secondary dark:text-dark-text "
               />
             </div>
