@@ -20,11 +20,9 @@ async function getQuizData({ category, difficulty, questionsNumber, type }) {
       category === "any" ? "" : category
     }&difficulty=${difficulty === "any" ? "" : difficulty}&type=${
       type === "any" ? "" : type
-    }`
+    }`,
   );
-
   const data = await response.json();
-  console.log(data);
   return data.results;
 }
 const categories = [
@@ -43,7 +41,9 @@ const categories = [
 function Button({ children, onclick }) {
   return (
     <button
-      className="px-5 py-3 w-44 mx-auto font-bold text-lg cursor-pointer rounded-2xl bg-primary outline-primary text-white "
+      className="mx-auto w-44 cursor-pointer rounded-2xl bg-primary px-5 py-3 text-lg font-bold text-white outline-primary
+      max-md:w-full
+      "
       onClick={onclick}
     >
       {children}
@@ -148,7 +148,7 @@ export default function App() {
   const questions = quizData.map((question) => he.decode(question.question));
   let answers = quizData.map((question) => {
     const randomIndex = Math.floor(
-      Math.random() * (question.incorrect_answers.length + 1)
+      Math.random() * (question.incorrect_answers.length + 1),
     );
     const answers =
       question.incorrect_answers.length === 1
@@ -167,7 +167,7 @@ export default function App() {
         id: nanoid(),
         answer,
       };
-    })
+    }),
   );
   const questionsTime = {
     easy: easyTime,
@@ -176,7 +176,7 @@ export default function App() {
   };
 
   return (
-    <div className="container mx-auto relative py-4 px-8 h-full grid grid-rows-[36px_1fr]">
+    <div className="container relative mx-auto grid h-auto min-h-full grid-rows-[36px_1fr] gap-10 px-8  py-6 max-md:px-4">
       <Header>
         <SettingsButton
           onToggleSettings={() => setIsSettingsOpen((so) => !so)}
@@ -200,7 +200,7 @@ export default function App() {
       ) : (
         <HeroSection>
           <Button onclick={() => setQuizStarted(true)}>
-            <i className="fa-solid fa-play text-xl mr-4"></i>
+            <i className="fa-solid fa-play mr-4 text-xl"></i>
             Start Quiz
           </Button>
         </HeroSection>
@@ -231,7 +231,7 @@ export default function App() {
         setEnableTimerSound={setEnableTimerSound}
       >
         <Button onclick={handleSave}>
-          <i className="fa-regular fa-floppy-disk text-xl mr-4"></i>
+          <i className="fa-regular fa-floppy-disk mr-4 text-xl"></i>
           Save
         </Button>
       </Settings>
@@ -247,11 +247,12 @@ function Header({ children }) {
     document.documentElement.classList.toggle("dark");
   }
   return (
-    <header className="flex justify-between items-center relative z-20">
-      <h2 className="text-3xl font-bold text-primary">QuizZ</h2>
+    <header className="relative z-20 flex items-center justify-between">
+      {/* <h2 className="text-3xl font-bold text-primary">QuizZ</h2> */}
+      <img src="/Logo-192.png" alt="QuizZ" className="h-20 w-20" />
       <div className="flex gap-5">
         {React.Children.map(children, (child) =>
-          React.cloneElement(child, { theme })
+          React.cloneElement(child, { theme }),
         )}
         <ThemeSwitcher theme={theme} onclick={toggleTheme} />
       </div>
@@ -280,7 +281,7 @@ function SettingsButton({ isSettingsOpen, onToggleSettings, theme }) {
 function HeroSection({ children }) {
   return (
     <div className="grid place-content-center place-items-center gap-24">
-      <h1 className="text-5xl text-center font-bold text-light-text leading-normal w-11/12 dark:text-dark-text">
+      <h1 className="w-11/12 text-center text-5xl font-bold leading-normal text-light-text dark:text-dark-text max-md:text-4xl">
         Welcome to <span className="text-primary">QuizZ</span>, Your Gateway to
         Knowledge and Fun!
       </h1>
@@ -312,7 +313,7 @@ function Quiz({
   const [hintsNumber, setHintsNumber] = useState(questionsNumber / 5);
   const [isHintUsed, setIsHintUsed] = useState(false);
   const [questionTime, setQuestionTime] = useState(
-    questionsTime[quizData[currentQuestion]?.difficulty] || 10
+    questionsTime[quizData[currentQuestion]?.difficulty] || 10,
   );
   const [isTimerPaused, setIsTimerPaused] = useState(!autoStartTimer);
 
@@ -361,7 +362,7 @@ function Quiz({
       setIsTimerPaused(!autoStartTimer);
       setIsAnswered(false);
       setQuestionTime(
-        questionsTime[quizData[currentQuestion]?.difficulty] || 10
+        questionsTime[quizData[currentQuestion]?.difficulty] || 10,
       );
       setCurrentQuestion((cq) => cq + 1);
       currentQuestion === questions.length - 1 && setQuizCompleted(true);
@@ -396,20 +397,11 @@ function Quiz({
     timerSoundEffect.pause();
   }
   return (
-    <div className="flex flex-col gap-5 items-center justify-evenly place-content-center mx-auto w-3/4">
+    <div className="mx-auto flex w-3/4 flex-col place-content-center items-center justify-evenly gap-7 max-md:w-full">
       {loading ? (
-        <div className="flex gap-5 items-baseline  place-content-center mx-auto w-3/4 ">
-          <h1 className="text-5xl w-fit text-center font-bold text-light-text leading-normal  dark:text-dark-text">
-            Loading Quiz
-          </h1>
-          <div className="flex gap-2">
-            <div className="w-4 h-4 rounded-full bg-light-text dark:bg-dark-text animate-bounce"></div>
-            <div className="w-4 h-4 rounded-full bg-light-text dark:bg-dark-text animate-bounce-200 "></div>
-            <div className="w-4 h-4 rounded-full bg-light-text dark:bg-dark-text animate-bounce-400 "></div>
-          </div>
-        </div>
+        <Loading />
       ) : quizData.length === 0 ? (
-        <h1 className="text-5xl text-center font-bold text-light-text leading-normal w-11/12 dark:text-dark-text">
+        <h1 className="w-11/12 text-center text-5xl font-bold leading-normal text-light-text dark:text-dark-text">
           No Questions Found, Please Change Your Settings and Try Again
         </h1>
       ) : quizCompleted ? (
@@ -419,7 +411,7 @@ function Quiz({
           unAnsweredQuestions={unAnsweredQuestions}
         >
           <Button onclick={handleRetry}>
-            <i className="fa-solid fa-redo-alt text-xl mr-2"></i> Try Again
+            <i className="fa-solid fa-redo-alt mr-2 text-xl"></i> Try Again
           </Button>
         </QuizCompleted>
       ) : (
@@ -457,10 +449,10 @@ function Quiz({
           </AnswersList>
           <ActionButtons>
             <Button onclick={handleEndQuiz}>
-              <i className="fa-solid fa-stop text-xl mr-2"></i> End Quiz
+              <i className="fa-solid fa-stop mr-2 text-xl"></i> End Quiz
             </Button>
             <Button onclick={handleSkip}>
-              <i className="fa-solid fa-forward text-xl mr-2"></i> Skip
+              <i className="fa-solid fa-forward mr-2 text-xl"></i> Skip
             </Button>
           </ActionButtons>
         </>
@@ -470,16 +462,16 @@ function Quiz({
 }
 function Question({ question }) {
   return (
-    <h1 className="text-4xl font-bold text-center leading-normal dark:text-dark-text text-light-text">
+    <h1 className="text-center text-4xl font-bold leading-normal text-light-text dark:text-dark-text max-md:text-3xl">
       {question}
     </h1>
   );
 }
 function AnswersList({ children }) {
   return (
-    <div className="flex w-full items-center">
+    <div className="flex w-full items-center max-md:flex-col max-md:gap-5">
       {children[0]}
-      <div className="flex flex-1 items-center flex-col gap-5">
+      <div className="flex flex-1 flex-col items-center gap-5 max-md:w-full">
         {children[1]}
       </div>
       {children[2]}
@@ -498,12 +490,12 @@ function Answer({
   return (
     <button
       className={
-        "px-5 py-3 w-3/4 font-bold text-lg text-start cursor-pointer rounded-xl flex justify-between items-center  " +
+        "flex w-3/4 cursor-pointer items-center justify-between rounded-xl px-5 py-3 text-start text-lg font-bold max-md:w-full  " +
         ((isAnswered || isHintUsed) && correct
-          ? "bg-light-correct dark:bg-dark-correct text-white"
+          ? "bg-light-correct text-white dark:bg-dark-correct"
           : isCurrentAnswer && !correct
-          ? "bg-light-incorrect dark:bg-dark-incorrect text-white"
-          : "bg-light-secondary dark:bg-dark-secondary text-light-text-2 dark:text-dark-text-2 ")
+          ? "bg-light-incorrect text-white dark:bg-dark-incorrect"
+          : "bg-light-secondary text-light-text-2 dark:bg-dark-secondary dark:text-dark-text-2 ")
       }
       onClick={() => {
         if (!isAnswered) {
@@ -531,12 +523,12 @@ function ProgressBar({ totalQuestions, currentQuestion }) {
   const percentage = Math.round(((currentQuestion + 1) / totalQuestions) * 100);
   return (
     <div
-      className="flex w-full gap-3 items-center
+      className="flex w-full items-center gap-3
     "
     >
-      <div className="w-full h-[5px] rounded-lg bg-light-secondary dark:bg-dark-secondary  relative">
+      <div className="relative h-[5px] w-full rounded-lg bg-light-secondary  dark:bg-dark-secondary">
         <div
-          className="absolute inset-0  rounded-lg transition-[width] duration-1000 bg-primary"
+          className="absolute inset-0  rounded-lg bg-primary transition-[width] duration-1000"
           style={{ width: `${percentage}%` }}
         ></div>
       </div>
@@ -549,7 +541,7 @@ function ProgressBar({ totalQuestions, currentQuestion }) {
 }
 function Progress({ totalQuestions, currentQuestion }) {
   return (
-    <span className="font-bold text-lg dark:text-dark-text text-light-text">
+    <span className="text-lg font-bold text-light-text dark:text-dark-text">
       {currentQuestion + 1}/{totalQuestions}
     </span>
   );
@@ -560,23 +552,27 @@ function QuestionTimer({ questionTime, isTimerPaused, onPause }) {
   seconds = seconds < 10 ? "0" + seconds : seconds;
   minutes = minutes < 10 ? "0" + minutes : minutes;
   return (
-    <div className="w-24  gap-3 flex items-center rounded-xl px-3 py-2 bg-light-secondary dark:bg-dark-secondary ">
+    <div className="flex  w-24 items-center gap-3 rounded-xl bg-light-secondary px-3 py-2 dark:bg-dark-secondary ">
       <i
         className={
           "fa-solid " +
           `fa-${isTimerPaused ? "play" : "pause"}` +
-          " text-xl dark:text-dark-text text-light-text cursor-pointer"
+          " cursor-pointer text-xl text-light-text dark:text-dark-text"
         }
         onClick={onPause}
       ></i>
-      <span className="font-bold text-lg dark:text-dark-text text-light-text">
+      <span className="text-lg font-bold text-light-text dark:text-dark-text">
         {minutes}:{seconds}
       </span>
     </div>
   );
 }
 function ActionButtons({ children }) {
-  return <div className="flex gap-10">{children}</div>;
+  return (
+    <div className="flex gap-10 max-md:w-full max-md:flex-col max-md:gap-5">
+      {children}
+    </div>
+  );
 }
 function Hint({ hintsNumber = "0", onclick }) {
   const style = {
@@ -585,7 +581,7 @@ function Hint({ hintsNumber = "0", onclick }) {
   return (
     <div className="hint" style={style}>
       <button
-        className=" w-10 h-10 grid place-content-center rounded-full bg-light-secondary dark:bg-dark-secondary relative before:absolute before:-top-3 before:-right-1 before:w-5 before:h-5 before:rounded-full before:bg-primary before:text-sm before:font-bold before:text-white before:cursor-auto before:leading-tight"
+        className=" relative grid h-10 w-10 place-content-center rounded-full bg-light-secondary before:absolute before:-right-1 before:-top-3 before:h-5 before:w-5 before:cursor-auto before:rounded-full before:bg-primary before:text-sm before:font-bold before:leading-tight before:text-white dark:bg-dark-secondary"
         onClick={onclick}
       >
         <i
@@ -593,6 +589,20 @@ function Hint({ hintsNumber = "0", onclick }) {
       "
         ></i>
       </button>
+    </div>
+  );
+}
+function Loading() {
+  return (
+    <div className="mx-auto flex  w-3/4  place-content-center items-baseline gap-5 max-md:w-full ">
+      <h1 className="w-fit text-center text-5xl font-bold leading-normal text-light-text dark:text-dark-text  max-md:text-4xl">
+        Loading Quiz
+      </h1>
+      <div className="flex gap-2">
+        <div className="h-4 w-4 animate-bounce rounded-full bg-light-text dark:bg-dark-text"></div>
+        <div className="h-4 w-4 animate-bounce-200 rounded-full bg-light-text dark:bg-dark-text "></div>
+        <div className="h-4 w-4 animate-bounce-400 rounded-full bg-light-text dark:bg-dark-text "></div>
+      </div>
     </div>
   );
 }
@@ -626,10 +636,10 @@ function ScoreMessage({ percentage }) {
     { maxScore: 100, message: "Fantastic! You've mastered this quiz!" },
   ];
   return (
-    <h1 className="text-5xl text-center font-bold text-light-text leading-normal w-11/12 dark:text-dark-text">
+    <h1 className="w-11/12 text-center text-5xl font-bold leading-normal text-light-text dark:text-dark-text max-md:w-full max-md:text-4xl">
       {
         scoreMessages.find(
-          (scoreMessage) => percentage <= scoreMessage.maxScore
+          (scoreMessage) => percentage <= scoreMessage.maxScore,
         ).message
       }
     </h1>
@@ -644,8 +654,8 @@ function Stats({
   const incorrectQuestions =
     totalQuestions - correctQuestions - unAnsweredQuestions;
   return (
-    <div className="flex flex-col gap-5 bg-light-secondary dark:bg-dark-secondary p-8 rounded-2xl w-4/5">
-      <div className="flex justify-between mb-6">
+    <div className="flex w-4/5 flex-col gap-5 rounded-2xl bg-light-secondary p-8 dark:bg-dark-secondary max-md:w-full">
+      <div className="mb-6 flex justify-between">
         <h3 className="text-3xl font-bold text-light-text dark:text-dark-text">
           Your Score
         </h3>
@@ -719,24 +729,24 @@ function Settings({
   return (
     <div
       className={
-        "absolute flex justify-center items-center w-full h-full bg-light-background dark:bg-dark-background  " +
+        "fixed left-0 flex h-full w-full items-center justify-center bg-light-background dark:bg-dark-background  " +
         (active ? "z-10 opacity-100" : "-z-10 opacity-0")
       }
     >
-      <div className="flex flex-col w-3/4">
-        <h1 className="text-5xl text-start font-bold text-light-text leading-normal dark:text-dark-text">
+      <div className="flex w-3/4 flex-col  gap-5 max-md:w-full max-md:px-4">
+        <h1 className="text-start text-5xl font-bold leading-normal text-light-text dark:text-dark-text max-md:text-4xl">
           Settings
         </h1>
-        <div className="h-[400px] py-5 pe-5 overflow-y-auto">
-          <h2 className="text-2xl mb-8 font-bold text-light-text-2 dark:text-dark-text-2">
+        <div className="h-[400px] overflow-y-auto py-5 pe-5">
+          <h2 className="mb-8 text-2xl font-bold text-light-text-2 dark:text-dark-text-2">
             Quiz Options
           </h2>
-          <form className="grid grid-cols-[1fr_300px] gap-6 w-full ps-5">
+          <form className="grid w-full grid-cols-[1fr_300px] gap-6 ps-5">
             <label className="text-xl font-bold text-light-text dark:text-dark-text">
               Category
             </label>
             <select
-              className="cursor-pointer text-center text-xl font-bold text-light-text dark:text-dark-text bg-light-secondary dark:bg-dark-secondary rounded-lg py-2 px-5 focus:outline-none"
+              className="cursor-pointer rounded-lg bg-light-secondary px-5 py-2 text-center text-xl font-bold text-light-text focus:outline-none dark:bg-dark-secondary dark:text-dark-text max-md:text-lg"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
             >
@@ -747,11 +757,11 @@ function Settings({
                 </option>
               ))}
             </select>
-            <label className="text-xl font-bold text-light-text dark:text-dark-text">
+            <label className="text-xl font-bold text-light-text dark:text-dark-text max-md:text-lg">
               Difficulty
             </label>
             <select
-              className="cursor-pointer text-center text-xl font-bold text-light-text dark:text-dark-text bg-light-secondary dark:bg-dark-secondary rounded-lg py-2 px-5 focus:outline-none "
+              className="cursor-pointer rounded-lg bg-light-secondary px-5 py-2 text-center text-xl font-bold text-light-text focus:outline-none dark:bg-dark-secondary dark:text-dark-text max-md:text-lg "
               value={difficulty}
               onChange={(e) => setDifficulty(e.target.value)}
             >
@@ -761,11 +771,11 @@ function Settings({
               <option value="hard">Hard</option>
             </select>
 
-            <label className="text-xl font-bold text-light-text dark:text-dark-text">
+            <label className="text-xl font-bold text-light-text dark:text-dark-text max-md:text-lg">
               Questions Number
             </label>
             <select
-              className="cursor-pointer text-center text-xl font-bold text-light-text dark:text-dark-text bg-light-secondary dark:bg-dark-secondary rounded-lg py-2 px-5 focus:outline-none "
+              className="cursor-pointer rounded-lg bg-light-secondary px-5 py-2 text-center text-xl font-bold text-light-text focus:outline-none dark:bg-dark-secondary dark:text-dark-text max-md:text-lg "
               value={questionsNumber}
               onChange={(e) => setQuestionsNumber(e.target.value)}
             >
@@ -777,11 +787,11 @@ function Settings({
               <option value="30">30</option>
             </select>
 
-            <label className="text-xl font-bold text-light-text dark:text-dark-text">
+            <label className="text-xl font-bold text-light-text dark:text-dark-text max-md:text-lg">
               Type
             </label>
             <select
-              className="cursor-pointer text-center text-xl font-bold text-light-text dark:text-dark-text bg-light-secondary dark:bg-dark-secondary rounded-lg py-2 px-5 focus:outline-none "
+              className="cursor-pointer rounded-lg bg-light-secondary px-5 py-2 text-center text-xl font-bold text-light-text focus:outline-none dark:bg-dark-secondary dark:text-dark-text max-md:text-lg "
               value={type}
               onChange={(e) => setType(e.target.value)}
             >
@@ -790,24 +800,24 @@ function Settings({
               <option value="boolean">True / False</option>
             </select>
           </form>
-          <h2 className="text-2xl my-8 font-bold text-light-text-2 dark:text-dark-text-2">
+          <h2 className="my-8 text-2xl font-bold text-light-text-2 dark:text-dark-text-2">
             Timer Options
           </h2>
-          <form className=" ps-5 gap-6 w-full">
+          <form className=" w-full gap-6 ps-5">
             <label className="text-xl font-bold text-light-text dark:text-dark-text">
               Timer Duration{" "}
               <span className="text-sm text-light-text-2 dark:text-dark-text-2">
                 (in secondes)
               </span>
             </label>
-            <div className="ps-3 my-6 grid grid-cols-3 gap-5">
-              <label className="text-lg font-bold text-light-text dark:text-dark-text">
+            <div className="my-6 grid grid-cols-3 gap-5 ps-3">
+              <label className="text-center text-lg font-bold text-light-text dark:text-dark-text">
                 Easy Questions
               </label>
-              <label className="text-lg font-bold text-light-text dark:text-dark-text">
+              <label className="text-center text-lg font-bold text-light-text dark:text-dark-text">
                 Medium Questions
               </label>
-              <label className="text-lg font-bold text-light-text dark:text-dark-text">
+              <label className="text-center text-lg font-bold text-light-text dark:text-dark-text">
                 Hard Questions
               </label>
 
@@ -817,7 +827,7 @@ function Settings({
                 max={60}
                 value={easyTime}
                 onChange={(e) => setEasyTime(e.target.value)}
-                className="text-center text-xl font-bold text-light-text dark:text-dark-text bg-light-secondary dark:bg-dark-secondary rounded-lg py-2 px-5 focus:outline-none "
+                className="rounded-lg bg-light-secondary px-5 py-2 text-center text-xl font-bold text-light-text focus:outline-none dark:bg-dark-secondary dark:text-dark-text "
               />
               <input
                 type="number"
@@ -825,7 +835,7 @@ function Settings({
                 max={90}
                 value={mediumTime}
                 onChange={(e) => setMediumTime(e.target.value)}
-                className="text-center text-xl font-bold text-light-text dark:text-dark-text bg-light-secondary dark:bg-dark-secondary rounded-lg py-2 px-5 focus:outline-none "
+                className="rounded-lg bg-light-secondary px-5 py-2 text-center text-xl font-bold text-light-text focus:outline-none dark:bg-dark-secondary dark:text-dark-text "
               />
               <input
                 type="number"
@@ -833,7 +843,7 @@ function Settings({
                 max={120}
                 value={hardTime}
                 onChange={(e) => setHardTime(e.target.value)}
-                className="text-center text-xl font-bold text-light-text dark:text-dark-text bg-light-secondary dark:bg-dark-secondary rounded-lg py-2 px-5 focus:outline-none "
+                className="rounded-lg bg-light-secondary px-5 py-2 text-center text-xl font-bold text-light-text focus:outline-none dark:bg-dark-secondary dark:text-dark-text "
               />
             </div>
             <div className="flex items-center justify-between">
@@ -843,88 +853,88 @@ function Settings({
               <label>
                 <input
                   type="checkbox"
-                  className="toggle-checkbox appearance-none peer absolute"
+                  className="toggle-checkbox peer absolute appearance-none"
                   checked={autoStartTimer}
                   onChange={(e) => setAutoStartTimer(e.target.checked)}
                 />
                 <div
-                  className="toggle-switch w-16 h-9 bg-light-secondary
-              dark:bg-dark-secondary rounded-[20px] relative cursor-pointer transition-colors duration-300
-              before:absolute before:w-7 before:h-7 before:rounded-full before:bg-light-text dark:before:bg-dark-text before:transition-[left] before:duration-300
-              before:top-1 before:left-[5px] 
-              peer-checked:bg-primary peer-checked:before:bg-white peer-checked:before:left-8
+                  className="toggle-switch relative h-9 w-16
+              cursor-pointer rounded-[20px] bg-light-secondary transition-colors duration-300 before:absolute
+              before:left-[5px] before:top-1 before:h-7 before:w-7 before:rounded-full before:bg-light-text before:transition-[left] before:duration-300
+              peer-checked:bg-primary peer-checked:before:left-8 
+              peer-checked:before:bg-white dark:bg-dark-secondary dark:before:bg-dark-text
               "
                 ></div>
               </label>
             </div>
           </form>
-          <h2 className="text-2xl my-8 font-bold text-light-text-2 dark:text-dark-text-2">
+          <h2 className="my-8 text-2xl font-bold text-light-text-2 dark:text-dark-text-2">
             Sound Options
           </h2>
-          <form className=" ps-5 gap-6 w-full">
+          <form className=" w-full gap-6 ps-5">
             <div className="flex items-center justify-between">
-              <label className="text-xl font-bold text-light-text dark:text-dark-text">
+              <label className="text-xl font-bold  text-light-text dark:text-dark-text max-md:text-lg">
                 Correct Answer Sound
               </label>
               <label>
                 <input
                   type="checkbox"
-                  className="toggle-checkbox appearance-none peer absolute"
+                  className="toggle-checkbox peer absolute appearance-none"
                   checked={enableCorrectAnswerSound}
                   onChange={(e) =>
                     setEnableCorrectAnswerSound(e.target.checked)
                   }
                 />
                 <div
-                  className="toggle-switch w-16 h-9 bg-light-secondary
-              dark:bg-dark-secondary rounded-[20px] relative cursor-pointer transition-colors duration-300
-              before:absolute before:w-7 before:h-7 before:rounded-full before:bg-light-text dark:before:bg-dark-text before:transition-[left] before:duration-300
-              before:top-1 before:left-[5px] 
-              peer-checked:bg-primary peer-checked:before:bg-white peer-checked:before:left-8
+                  className="toggle-switch relative h-9 w-16
+              cursor-pointer rounded-[20px] bg-light-secondary transition-colors duration-300 before:absolute
+              before:left-[5px] before:top-1 before:h-7 before:w-7 before:rounded-full before:bg-light-text before:transition-[left] before:duration-300
+              peer-checked:bg-primary peer-checked:before:left-8 
+              peer-checked:before:bg-white dark:bg-dark-secondary dark:before:bg-dark-text
               "
                 ></div>
               </label>
             </div>
-            <div className="flex my-6 items-center justify-between">
-              <label className="text-xl font-bold text-light-text dark:text-dark-text">
+            <div className="my-6 flex items-center justify-between">
+              <label className="text-xl font-bold  text-light-text dark:text-dark-text max-md:text-lg">
                 Incorrect Answer Sound
               </label>
               <label>
                 <input
                   type="checkbox"
-                  className="toggle-checkbox appearance-none peer absolute"
+                  className="toggle-checkbox peer absolute appearance-none"
                   checked={enableIncorrectAnswerSound}
                   onChange={(e) =>
                     setEnableIncorrectAnswerSound(e.target.checked)
                   }
                 />
                 <div
-                  className="toggle-switch w-16 h-9 bg-light-secondary
-              dark:bg-dark-secondary rounded-[20px] relative cursor-pointer transition-colors duration-300
-              before:absolute before:w-7 before:h-7 before:rounded-full before:bg-light-text dark:before:bg-dark-text before:transition-[left] before:duration-300
-              before:top-1 before:left-[5px] 
-              peer-checked:bg-primary peer-checked:before:bg-white peer-checked:before:left-8
+                  className="toggle-switch relative h-9 w-16
+              cursor-pointer rounded-[20px] bg-light-secondary transition-colors duration-300 before:absolute
+              before:left-[5px] before:top-1 before:h-7 before:w-7 before:rounded-full before:bg-light-text before:transition-[left] before:duration-300
+              peer-checked:bg-primary peer-checked:before:left-8 
+              peer-checked:before:bg-white dark:bg-dark-secondary dark:before:bg-dark-text
               "
                 ></div>
               </label>
             </div>
             <div className="flex items-center justify-between">
-              <label className="text-xl font-bold text-light-text dark:text-dark-text">
+              <label className="text-xl font-bold  text-light-text dark:text-dark-text max-md:text-lg">
                 Timer Sound
               </label>
               <label>
                 <input
                   type="checkbox"
-                  className="toggle-checkbox appearance-none peer absolute"
+                  className="toggle-checkbox peer absolute appearance-none"
                   checked={enableTimerSound}
                   onChange={(e) => setEnableTimerSound(e.target.checked)}
                 />
                 <div
-                  className="toggle-switch w-16 h-9 bg-light-secondary
-              dark:bg-dark-secondary rounded-[20px] relative cursor-pointer transition-colors duration-300
-              before:absolute before:w-7 before:h-7 before:rounded-full before:bg-light-text dark:before:bg-dark-text before:transition-[left] before:duration-300
-              before:top-1 before:left-[5px] 
-              peer-checked:bg-primary peer-checked:before:bg-white peer-checked:before:left-8
+                  className="toggle-switch relative h-9 w-16
+              cursor-pointer rounded-[20px] bg-light-secondary transition-colors duration-300 before:absolute
+              before:left-[5px] before:top-1 before:h-7 before:w-7 before:rounded-full before:bg-light-text before:transition-[left] before:duration-300
+              peer-checked:bg-primary peer-checked:before:left-8 
+              peer-checked:before:bg-white dark:bg-dark-secondary dark:before:bg-dark-text
               "
                 ></div>
               </label>
