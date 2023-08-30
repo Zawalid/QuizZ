@@ -57,7 +57,7 @@ export default function App() {
   const [quizData, setQuizData] = useState([]);
   const [category, setCategory] = useState("any");
   const [difficulty, setDifficulty] = useState("any");
-  const [questionsNumber, setQuestionsNumber] = useState(5);
+  const [questionsNumber, setQuestionsNumber] = useState(10);
   const [type, setType] = useState("any");
   const [easyTime, setEasyTime] = useState(15);
   const [mediumTime, setMediumTime] = useState(20);
@@ -401,9 +401,15 @@ function Quiz({
       {loading ? (
         <Loading />
       ) : quizData.length === 0 ? (
-        <h1 className="w-11/12 text-center text-5xl font-bold leading-normal text-light-text dark:text-dark-text">
-          No Questions Found, Please Change Your Settings and Try Again
-        </h1>
+        window.navigator.onLine ? (
+          <h1 className="w-11/12 text-center text-5xl font-bold leading-normal text-light-text dark:text-dark-text max-md:w-full max-md:text-4xl">
+            No Questions Found, Please Change Your Settings and Try Again
+          </h1>
+        ) : (
+          <h1 className="w-11/12 text-center text-5xl font-bold leading-normal text-light-text dark:text-dark-text max-md:w-full max-md:text-4xl">
+            No Internet Connection, Please Check Your Connection and Try Again
+          </h1>
+        )
       ) : quizCompleted ? (
         <QuizCompleted
           totalQuestions={questions.length}
@@ -727,7 +733,7 @@ function Settings({
   return (
     <div
       className={
-        "fixed left-0 top-0 flex h-full w-full items-center justify-center bg-light-background pb-5 pt-20 dark:bg-dark-background  " +
+        "fixed left-0 top-0 flex h-full w-full items-center justify-center bg-light-background pb-5 pt-24 dark:bg-dark-background  " +
         (active ? "z-10 opacity-100" : "-z-10 opacity-0")
       }
     >
