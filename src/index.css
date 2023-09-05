@@ -30,6 +30,7 @@ select {
 
 ::-webkit-scrollbar {
   width: 0.2rem;
+  height: 0.2rem;
 }
 ::-webkit-scrollbar-thumb {
   background-color: #333;
@@ -45,4 +46,7 @@ html.dark {
   ::-webkit-scrollbar-track {
     background-color: #333;
   }
+}
+.table_container::-webkit-scrollbar {
+  display: none;
 }
