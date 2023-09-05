@@ -15,6 +15,7 @@ timerSoundEffect.setAttribute("loop", "true");
 
 export default function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isQuizHistoryOpen, setIsQuizHistoryOpen] = useState(false);
   const [isSettingsSaved, setIsSettingsSaved] = useState(false);
   const [quizStarted, setQuizStarted] = useState(false);
   const {
@@ -60,7 +61,6 @@ export default function App() {
     difficulty,
     questionsNumber,
     type,
-    isSettingsSaved,
     quizStarted,
     retryClickCount,
   );
@@ -151,6 +151,10 @@ export default function App() {
     }
     setIsSettingsOpen((so) => !so);
   }
+  function handleBackToHome() {
+    setQuizStarted(false);
+    setIsQuizHistoryOpen(false);
+  }
 
   return (
     <div className="container relative mx-auto grid h-auto min-h-full grid-rows-[36px_1fr] gap-10 px-8  py-6 max-md:px-4">
@@ -160,8 +164,10 @@ export default function App() {
           isSettingsOpen={isSettingsOpen}
         />
       </Header>
-      {quizStarted ? (
+      {(quizStarted || isQuizHistoryOpen) ? (
         <Quiz
+        quizStarted={quizStarted}
+        setQuizStarted={setQuizStarted}
           quizData={quizData}
           questions={questions}
           answers={answers}
@@ -175,13 +181,21 @@ export default function App() {
           isSettingsSaved={isSettingsSaved}
           isLoading={isLoading}
           error={error}
+          onBackToHome={handleBackToHome}
+          isQuizHistoryOpen={isQuizHistoryOpen}
+          setIsQuizHistoryOpen={setIsQuizHistoryOpen}
         />
       ) : (
         <HeroSection>
-          <Button onclick={() => setQuizStarted(true)}>
-            <i className="fa-solid fa-play mr-4 text-xl"></i>
-            Start Quiz
-          </Button>
+          <ActionButtons>
+          <Button onclick={() => setIsQuizHistoryOpen(true)}>
+              <i className="fa-solid fa-clock-rotate-left mr-2 text-xl"></i> Quiz History
+            </Button>
+            <Button onclick={() => setQuizStarted(true)}>
+              <i className="fa-solid fa-play mr-4 text-xl"></i>
+              Start Quiz
+            </Button>
+          </ActionButtons>
         </HeroSection>
       )}
       <Settings

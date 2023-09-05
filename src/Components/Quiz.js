@@ -9,11 +9,14 @@ import { QuestionTimer } from "./QuestionTimer";
 import { timerSoundEffect, Button, ActionButtons } from "./App";
 import correctAnswer from "../Assets/sounds/correct-answer-sound.mp3";
 import incorrectAnswer from "../Assets/sounds/wrong-answer-sound.mp3";
+import { useLocalStorageState } from "./useLocalStorageState";
 
 const correctAnswerSoundEffect = new Audio(correctAnswer);
 const incorrectAnswerSoundEffect = new Audio(incorrectAnswer);
 // Quiz Section
 export function Quiz({
+  quizStarted,
+  setQuizStarted,
   quizData,
   isLoading,
   error,
@@ -26,6 +29,9 @@ export function Quiz({
   enableCorrectAnswerSound,
   enableIncorrectAnswerSound,
   enableTimerSound,
+  onBackToHome,
+  isQuizHistoryOpen,
+  setIsQuizHistoryOpen,
 }) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [quizCompleted, setQuizCompleted] = useState(false);
@@ -39,8 +45,7 @@ export function Quiz({
   );
   const [isTimerPaused, setIsTimerPaused] = useState(!autoStartTimer);
   const quizTime = useRef(0);
-
-  const [quizHistory, setQuizHistory] = useState([]);
+  const [quizHistory, setQuizHistory] = useLocalStorageState("quizHistory", []);
 
   useEffect(() => {
     if (questionTime === 0) handleSkip();
@@ -98,6 +103,7 @@ export function Quiz({
   }
   function handleRetry() {
     onRetry();
+    setQuizStarted(true)
     setQuizCompleted(false);
     setCurrentQuestion(0);
     setCorrectQuestions(0);
@@ -144,10 +150,14 @@ export function Quiz({
     ]);
   }
   return (
-    <div className="mx-auto flex  lg:w-3/4 flex-col place-content-center items-center justify-evenly gap-7 max-md:w-full  overflow-hidden">
+    <div
+      className={`mx-auto flex  flex-col place-content-center items-center justify-evenly gap-7  max-md:w-full  lg:w-3/4 ${
+        isQuizHistoryOpen ? " overflow-hidden" : ""
+      }`}
+    >
       {isLoading && <Loading />}
       {error && <Error>{error}</Error>}
-      {!error && !isLoading && quizCompleted && (
+      {!error && !isLoading && !isQuizHistoryOpen && quizCompleted && (
         <QuizCompleted
           totalQuestions={questions.length}
           correctQuestions={correctQuestions}
@@ -156,8 +166,9 @@ export function Quiz({
           onCompleted={handleQuizHistory}
         >
           <ActionButtons>
-            <Button>
-              <i className="fa-solid fa-list mr-2 text-xl"></i> Quiz History
+            <Button onclick={() => setIsQuizHistoryOpen(true)}>
+              <i className="fa-solid fa-clock-rotate-left mr-2 text-xl"></i>{" "}
+              Quiz History
             </Button>
             <Button onclick={handleRetry}>
               <i className="fa-solid fa-redo-alt mr-2 text-xl"></i> Try Again
@@ -165,50 +176,72 @@ export function Quiz({
           </ActionButtons>
         </QuizCompleted>
       )}
-      {!error && !isLoading && !quizCompleted && quizData.length > 0 && (
-        <>
-          <ProgressBar
-            totalQuestions={questions.length}
-            currentQuestion={currentQuestion}
-          />
-          <Question question={questions[currentQuestion]} />
-          <AnswersList hintsNumber={hintsNumber}>
-            <QuestionTimer
-              questionTime={questionTime}
-              isTimerPaused={isTimerPaused}
-              onPause={handlePause}
+      {!error &&
+        !isLoading &&
+        !isQuizHistoryOpen &&
+        !quizCompleted &&
+        quizData.length > 0 && (
+          <>
+            <ProgressBar
+              totalQuestions={questions.length}
+              currentQuestion={currentQuestion}
             />
-            {answers[currentQuestion]?.map((answer) => (
-              <Answer
-                key={answer.id}
-                correctAnswer={correctAnswer}
-                onAnswer={handleAnswer}
-                isAnswered={isAnswered}
-                isHintUsed={isHintUsed}
-              >
-                {answer.answer}
-              </Answer>
-            ))}
-            <Hint
-              hintsNumber={hintsNumber}
-              onclick={() => {
-                if (hintsNumber === 0 || isHintUsed) return;
-                setHintsNumber((hn) => hn - 1);
-                setIsHintUsed(true);
-              }}
-            />
-          </AnswersList>
+            <Question question={questions[currentQuestion]} />
+            <AnswersList hintsNumber={hintsNumber}>
+              <QuestionTimer
+                questionTime={questionTime}
+                isTimerPaused={isTimerPaused}
+                onPause={handlePause}
+              />
+              {answers[currentQuestion]?.map((answer) => (
+                <Answer
+                  key={answer.id}
+                  correctAnswer={correctAnswer}
+                  onAnswer={handleAnswer}
+                  isAnswered={isAnswered}
+                  isHintUsed={isHintUsed}
+                >
+                  {answer.answer}
+                </Answer>
+              ))}
+              <Hint
+                hintsNumber={hintsNumber}
+                onclick={() => {
+                  if (hintsNumber === 0 || isHintUsed) return;
+                  setHintsNumber((hn) => hn - 1);
+                  setIsHintUsed(true);
+                }}
+              />
+            </AnswersList>
+            <ActionButtons>
+              <Button onclick={handleEndQuiz}>
+                <i className="fa-solid fa-stop mr-2 text-xl"></i> End Quiz
+              </Button>
+              <Button onclick={handleSkip}>
+                <i className="fa-solid fa-forward mr-2 text-xl"></i> Skip
+              </Button>
+            </ActionButtons>
+          </>
+        )}
+      {isQuizHistoryOpen && (
+        <QuizHistory quizHistory={quizHistory}>
           <ActionButtons>
-            <Button onclick={handleEndQuiz}>
-              <i className="fa-solid fa-stop mr-2 text-xl"></i> End Quiz
+            <Button onclick={onBackToHome}>
+              <i className="fa-solid fa-home mr-2 text-xl"></i> Home Page
             </Button>
-            <Button onclick={handleSkip}>
-              <i className="fa-solid fa-forward mr-2 text-xl"></i> Skip
-            </Button>
+            {quizStarted && (
+              <Button
+                onclick={() => {
+                  handleRetry();
+                  setIsQuizHistoryOpen(false);
+                }}
+              >
+                <i className="fa-solid fa-redo-alt mr-2 text-xl"></i> Try Again
+              </Button>
+            )}
           </ActionButtons>
-        </>
+        </QuizHistory>
       )}
-      {<QuizHistory quizHistory={quizHistory} />}
     </div>
   );
 }

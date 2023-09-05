@@ -13,7 +13,6 @@ export function useFetchQuiz(
   const [error, setError] = useState(null);
   useEffect(() => {
     async function getQuizData() {
-      console.log(777);
       try {
         setIsLoading(true);
         setError(null);
@@ -41,11 +40,11 @@ export function useFetchQuiz(
           : setError(error.message);
       } finally {
         setTimeout(() => {
-        setIsLoading(false);
+          setIsLoading(false);
         }, 1000);
       }
     }
-    (quizStarted || retryClickCount > 0) && getQuizData();
+    (quizStarted  || retryClickCount > 0) && getQuizData();
   }, [
     category,
     difficulty,
