@@ -9,7 +9,6 @@ import { QuestionTimer } from "./QuestionTimer";
 import { timerSoundEffect, Button, ActionButtons } from "./App";
 import correctAnswer from "../Assets/sounds/correct-answer-sound.mp3";
 import incorrectAnswer from "../Assets/sounds/wrong-answer-sound.mp3";
-import { useLocalStorageState } from "./useLocalStorageState";
 
 const correctAnswerSoundEffect = new Audio(correctAnswer);
 const incorrectAnswerSoundEffect = new Audio(incorrectAnswer);
@@ -32,6 +31,8 @@ export function Quiz({
   onBackToHome,
   isQuizHistoryOpen,
   setIsQuizHistoryOpen,
+  quizHistory,
+  onCompleted,
 }) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [quizCompleted, setQuizCompleted] = useState(false);
@@ -45,7 +46,6 @@ export function Quiz({
   );
   const [isTimerPaused, setIsTimerPaused] = useState(!autoStartTimer);
   const quizTime = useRef(0);
-  const [quizHistory, setQuizHistory] = useLocalStorageState("quizHistory", []);
 
   useEffect(() => {
     if (questionTime === 0) handleSkip();
@@ -103,7 +103,7 @@ export function Quiz({
   }
   function handleRetry() {
     onRetry();
-    setQuizStarted(true)
+    setQuizStarted(true);
     setQuizCompleted(false);
     setCurrentQuestion(0);
     setCorrectQuestions(0);
@@ -129,26 +129,6 @@ export function Quiz({
   function handlePause() {
     setIsTimerPaused((itp) => !itp);
   }
-  function handleQuizHistory({
-    totalQuestions,
-    correctQuestions,
-    incorrectQuestions,
-    unAnsweredQuestions,
-    score,
-    quizTime,
-  }) {
-    setQuizHistory((qh) => [
-      ...qh,
-      {
-        totalQuestions,
-        correctQuestions,
-        incorrectQuestions,
-        unAnsweredQuestions,
-        score,
-        quizTime,
-      },
-    ]);
-  }
   return (
     <div
       className={`mx-auto flex  flex-col place-content-center items-center justify-evenly gap-7  max-md:w-full  lg:w-3/4 ${
@@ -163,7 +143,7 @@ export function Quiz({
           correctQuestions={correctQuestions}
           unAnsweredQuestions={unAnsweredQuestions}
           quizTime={quizTime.current}
-          onCompleted={handleQuizHistory}
+          onCompleted={onCompleted}
         >
           <ActionButtons>
             <Button onclick={() => setIsQuizHistoryOpen(true)}>
@@ -214,10 +194,10 @@ export function Quiz({
               />
             </AnswersList>
             <ActionButtons>
-              <Button onclick={handleEndQuiz}>
+              <Button onclick={() => !isAnswered && handleEndQuiz()}>
                 <i className="fa-solid fa-stop mr-2 text-xl"></i> End Quiz
               </Button>
-              <Button onclick={handleSkip}>
+              <Button onclick={() => !isAnswered && handleSkip()}>
                 <i className="fa-solid fa-forward mr-2 text-xl"></i> Skip
               </Button>
             </ActionButtons>

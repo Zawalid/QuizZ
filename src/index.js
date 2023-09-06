@@ -11,9 +11,7 @@ if (process.env.NODE_ENV === "production") {
 
 const root = createRoot(document.getElementById("root"));
 root.render(
-  <React.StrictMode>
     <App />
-  </React.StrictMode>,
 );
 
 // Theme Switcher

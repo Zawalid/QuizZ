@@ -1,4 +1,4 @@
-import React from "react";
+import {useState} from "react";
 
 const categories = [
   { id: 9, name: "General Knowledge" },
@@ -51,7 +51,9 @@ export function Settings({
   setEnableIncorrectAnswerSound,
   enableTimerSound,
   setEnableTimerSound,
+  onClearQuizHistory,
 }) {
+  const [isQuizHistoryCleared, setIsQuizHistoryCleared] = useState(false);
   return (
     <div
       className={
@@ -272,6 +274,36 @@ export function Settings({
               </label>
             </div>
           </form>
+          <h2 className="my-8 text-2xl font-bold text-light-text-2 dark:text-dark-text-2">
+            Quiz History
+          </h2>
+          <div className="flex items-center justify-between">
+            <span className="text-xl font-bold  text-light-text dark:text-dark-text max-md:text-lg">
+              Clear Quiz History
+            </span>
+            <button
+              className="rounded-lg bg-light-incorrect px-5 py-2 text-xl font-bold  text-white dark:bg-dark-incorrect max-md:text-lg"
+              onClick={() => {
+                onClearQuizHistory();
+                setIsQuizHistoryCleared(true);
+                setTimeout(() => {
+                  setIsQuizHistoryCleared(false);
+                }, 3000);
+              }}
+            >
+              {isQuizHistoryCleared ? (
+                <>
+                  <i className="fa-solid fa-check mr-3"></i>
+                  Cleared
+                </>
+              ) : (
+                <>
+                  <i className="fa-solid fa-trash mr-3"></i>
+                  Clear
+                </>
+              )}
+            </button>
+          </div>
         </div>
         {children}
       </div>

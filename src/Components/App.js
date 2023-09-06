@@ -9,6 +9,7 @@ import { Header, SettingsButton } from "./Header";
 import { HeroSection } from "./HeroSection";
 import { useSettings } from "./useSettings";
 import { useFetchQuiz } from "./useFetchQuiz";
+import { useLocalStorageState } from "./useLocalStorageState";
 
 export const timerSoundEffect = new Audio(timer);
 timerSoundEffect.setAttribute("loop", "true");
@@ -64,6 +65,8 @@ export default function App() {
     quizStarted,
     retryClickCount,
   );
+  const [quizHistory, setQuizHistory] = useLocalStorageState("quizHistory", []);
+  const quizNumber = useRef(quizHistory.length + 1);
 
   const questions = quizData.map((question) => he.decode(question.question));
   let answers = quizData.map((question) => {
@@ -155,6 +158,30 @@ export default function App() {
     setQuizStarted(false);
     setIsQuizHistoryOpen(false);
   }
+  function handleAddToQuizHistory({
+    totalQuestions,
+    correctQuestions,
+    incorrectQuestions,
+    unAnsweredQuestions,
+    score,
+    quizTime,
+  }) {
+    setQuizHistory((qh) => [
+      ...qh,
+      {
+        totalQuestions,
+        correctQuestions,
+        incorrectQuestions,
+        unAnsweredQuestions,
+        score,
+        quizTime,
+        quizNumber: quizNumber.current++,
+      },
+    ]);
+  }
+  function handleClearQuizHistory() {
+    setQuizHistory([]);
+  }
 
   return (
     <div className="container relative mx-auto grid h-auto min-h-full grid-rows-[36px_1fr] gap-10 px-8  py-6 max-md:px-4">
@@ -164,10 +191,10 @@ export default function App() {
           isSettingsOpen={isSettingsOpen}
         />
       </Header>
-      {(quizStarted || isQuizHistoryOpen) ? (
+      {quizStarted || isQuizHistoryOpen ? (
         <Quiz
-        quizStarted={quizStarted}
-        setQuizStarted={setQuizStarted}
+          quizStarted={quizStarted}
+          setQuizStarted={setQuizStarted}
           quizData={quizData}
           questions={questions}
           answers={answers}
@@ -184,12 +211,15 @@ export default function App() {
           onBackToHome={handleBackToHome}
           isQuizHistoryOpen={isQuizHistoryOpen}
           setIsQuizHistoryOpen={setIsQuizHistoryOpen}
+          quizHistory={quizHistory}
+          onCompleted={handleAddToQuizHistory}
         />
       ) : (
         <HeroSection>
           <ActionButtons>
-          <Button onclick={() => setIsQuizHistoryOpen(true)}>
-              <i className="fa-solid fa-clock-rotate-left mr-2 text-xl"></i> Quiz History
+            <Button onclick={() => setIsQuizHistoryOpen(true)}>
+              <i className="fa-solid fa-clock-rotate-left mr-2 text-xl"></i>{" "}
+              Quiz History
             </Button>
             <Button onclick={() => setQuizStarted(true)}>
               <i className="fa-solid fa-play mr-4 text-xl"></i>
@@ -222,6 +252,7 @@ export default function App() {
         setEnableIncorrectAnswerSound={setEnableIncorrectAnswerSound}
         enableTimerSound={enableTimerSound}
         setEnableTimerSound={setEnableTimerSound}
+        onClearQuizHistory={handleClearQuizHistory}
       >
         <Button onclick={handleSave}>
           <i className="fa-regular fa-floppy-disk mr-4 text-xl"></i>
@@ -236,7 +267,7 @@ export function Button({ children, onclick }) {
   return (
     <button
       className="mx-auto w-48 cursor-pointer rounded-2xl bg-primary px-5 py-3 text-lg font-bold text-white outline-primary
-      max-md:w-full
+      transition-colors duration-300 ease-in-out hover:bg-opacity-80 max-md:w-full
       "
       onClick={onclick}
     >
