@@ -3,13 +3,12 @@ import he from "he";
 import { nanoid } from "nanoid";
 
 import timer from "../Assets/sounds/timer-sound.mp3";
-import { Settings } from "./Settings";
-import { Quiz } from "./Quiz";
+import { Settings } from "./Settings/Settings";
+import { Quiz } from "./Quiz/Quiz";
 import { Header, SettingsButton } from "./Header";
 import { HeroSection } from "./HeroSection";
-import { useSettings } from "./useSettings";
+import { useSettings } from "./Settings/useSettings";
 import { useFetchQuiz } from "./useFetchQuiz";
-import { useLocalStorageState } from "./useLocalStorageState";
 
 export const timerSoundEffect = new Audio(timer);
 timerSoundEffect.setAttribute("loop", "true");
@@ -65,8 +64,8 @@ export default function App() {
     quizStarted,
     retryClickCount,
   );
-  const [quizHistory, setQuizHistory] = useLocalStorageState("quizHistory", []);
-  const quizNumber = useRef(quizHistory.length + 1);
+  // const [quizHistory, setQuizHistory] = useLocalStorageState("quizHistory", []);
+  // const quizNumber = useRef(quizHistory.length + 1);
 
   const questions = quizData.map((question) => he.decode(question.question));
   let answers = quizData.map((question) => {
@@ -158,30 +157,33 @@ export default function App() {
     setQuizStarted(false);
     setIsQuizHistoryOpen(false);
   }
-  function handleAddToQuizHistory({
-    totalQuestions,
-    correctQuestions,
-    incorrectQuestions,
-    unAnsweredQuestions,
-    score,
-    quizTime,
-  }) {
-    setQuizHistory((qh) => [
-      ...qh,
-      {
-        totalQuestions,
-        correctQuestions,
-        incorrectQuestions,
-        unAnsweredQuestions,
-        score,
-        quizTime,
-        quizNumber: quizNumber.current++,
-      },
-    ]);
-  }
-  function handleClearQuizHistory() {
-    setQuizHistory([]);
-  }
+  // function handleAddToQuizHistory({
+  //   totalQuestions,
+  //   correctQuestions,
+  //   incorrectQuestions,
+  //   unAnsweredQuestions,
+  //   score,
+  //   quizTime,
+  // }) {
+  //   setQuizHistory((qh) => [
+  //     ...qh,
+  //     {
+  //       totalQuestions,
+  //       correctQuestions,
+  //       incorrectQuestions,
+  //       unAnsweredQuestions,
+  //       score,
+  //       quizTime,
+  //       quizNumber: quizNumber.current++,
+  //     },
+  //   ]);
+  // }
+  // function handleClearQuizHistory() {
+  //   setQuizHistory([]);
+  // }
+  // function handleRemoveFromQuizHistory(quizNumber) {
+  //   setQuizHistory((qh) => qh.filter((quiz) => quiz.quizNumber !== quizNumber));
+  // }
 
   return (
     <div className="container relative mx-auto grid h-auto min-h-full grid-rows-[36px_1fr] gap-10 px-8  py-6 max-md:px-4">
@@ -211,8 +213,7 @@ export default function App() {
           onBackToHome={handleBackToHome}
           isQuizHistoryOpen={isQuizHistoryOpen}
           setIsQuizHistoryOpen={setIsQuizHistoryOpen}
-          quizHistory={quizHistory}
-          onCompleted={handleAddToQuizHistory}
+        
         />
       ) : (
         <HeroSection>
@@ -252,7 +253,6 @@ export default function App() {
         setEnableIncorrectAnswerSound={setEnableIncorrectAnswerSound}
         enableTimerSound={enableTimerSound}
         setEnableTimerSound={setEnableTimerSound}
-        onClearQuizHistory={handleClearQuizHistory}
       >
         <Button onclick={handleSave}>
           <i className="fa-regular fa-floppy-disk mr-4 text-xl"></i>

@@ -1,5 +1,11 @@
 export function Pagination({
-  currentPage, onNextPage, onPreviousPage, rowsPerPage, quizHistoryLength, onChangeRowsPerPage, disabledButton,
+  currentPage,
+  onNextPage,
+  onPreviousPage,
+  rowsPerPage,
+  quizHistoryLength,
+  onChangeRowsPerPage,
+  disabledButton,
 }) {
   return (
     <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
@@ -30,20 +36,24 @@ export function Pagination({
 
       <div className="flex items-center">
         <button
-          className={"ml-0 flex h-full items-center justify-center rounded-l-lg  bg-light-secondary px-3 py-1.5 text-light-text    dark:bg-dark-secondary  dark:text-dark-text  " +
-            (disabledButton === "previous"
+          className={
+            "ml-0 flex h-full items-center justify-center rounded-l-lg  bg-light-secondary px-3 py-1.5 text-light-text    dark:bg-dark-secondary  dark:text-dark-text  " +
+            (disabledButton === "previous" || disabledButton === "both"
               ? "cursor-not-allowed opacity-50"
-              : "hover:bg-primary hover:text-white dark:hover:bg-primary")}
+              : "hover:bg-primary hover:text-white dark:hover:bg-primary")
+          }
           onClick={onPreviousPage}
         >
           Previous
         </button>
 
         <button
-          className={"ml-0 flex h-full items-center justify-center rounded-r-lg  bg-light-secondary px-3 py-1.5 text-light-text    dark:bg-dark-secondary  dark:text-dark-text  " +
-            (disabledButton === "next"
+          className={
+            "ml-0 flex h-full items-center justify-center rounded-r-lg  bg-light-secondary px-3 py-1.5 text-light-text    dark:bg-dark-secondary  dark:text-dark-text  " +
+            (disabledButton === "next" || disabledButton === "both"
               ? "cursor-not-allowed opacity-50"
-              : "hover:bg-primary hover:text-white dark:hover:bg-primary")}
+              : "hover:bg-primary hover:text-white dark:hover:bg-primary")
+          }
           onClick={onNextPage}
         >
           Next

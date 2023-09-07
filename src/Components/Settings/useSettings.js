@@ -1,4 +1,4 @@
-import { useLocalStorageState } from "./useLocalStorageState";
+import { useLocalStorageState } from "../useLocalStorageState";
 import { defaultSettings } from "./Settings";
 
 export function useSettings(isSettingsSaved) {

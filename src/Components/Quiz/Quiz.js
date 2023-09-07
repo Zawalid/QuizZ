@@ -1,18 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
 import he from "he";
-import { QuizCompleted } from "./QuizCompleted";
-import { QuizHistory } from "./QuizHistory";
+import { QuizCompleted } from "../Quiz Summary/QuizCompleted";
+import { QuizHistory } from "../Quiz History/QuizHistory";
 import { Hint } from "./Hint";
 import { AnswersList, Answer } from "./AnswersList";
 import { ProgressBar } from "./ProgressBar";
 import { QuestionTimer } from "./QuestionTimer";
-import { timerSoundEffect, Button, ActionButtons } from "./App";
-import correctAnswer from "../Assets/sounds/correct-answer-sound.mp3";
-import incorrectAnswer from "../Assets/sounds/wrong-answer-sound.mp3";
+import { timerSoundEffect, Button, ActionButtons } from "../App";
+import correctAnswer from "../../Assets/sounds/correct-answer-sound.mp3";
+import incorrectAnswer from "../../Assets/sounds/wrong-answer-sound.mp3";
+import { useLocalStorageState } from "../useLocalStorageState";
 
 const correctAnswerSoundEffect = new Audio(correctAnswer);
 const incorrectAnswerSoundEffect = new Audio(incorrectAnswer);
-// Quiz Section
 export function Quiz({
   quizStarted,
   setQuizStarted,
@@ -31,8 +31,7 @@ export function Quiz({
   onBackToHome,
   isQuizHistoryOpen,
   setIsQuizHistoryOpen,
-  quizHistory,
-  onCompleted,
+  
 }) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [quizCompleted, setQuizCompleted] = useState(false);
@@ -46,6 +45,8 @@ export function Quiz({
   );
   const [isTimerPaused, setIsTimerPaused] = useState(!autoStartTimer);
   const quizTime = useRef(0);
+  const [quizHistory, setQuizHistory] = useLocalStorageState("quizHistory", []);
+  const quizNumber = useRef(quizHistory.length + 1);
 
   useEffect(() => {
     if (questionTime === 0) handleSkip();
@@ -129,6 +130,34 @@ export function Quiz({
   function handlePause() {
     setIsTimerPaused((itp) => !itp);
   }
+
+  function handleAddToQuizHistory({
+    totalQuestions,
+    correctQuestions,
+    incorrectQuestions,
+    unAnsweredQuestions,
+    score,
+    quizTime,
+  }) {
+    setQuizHistory((qh) => [
+      ...qh,
+      {
+        totalQuestions,
+        correctQuestions,
+        incorrectQuestions,
+        unAnsweredQuestions,
+        score,
+        quizTime,
+        quizNumber: quizNumber.current++,
+      },
+    ]);
+  }
+  function handleClearQuizHistory() {
+    setQuizHistory([]);
+  }
+  function handleRemoveFromQuizHistory(quizNumber) {
+    setQuizHistory((qh) => qh.filter((quiz) => quiz.quizNumber !== quizNumber));
+  }
   return (
     <div
       className={`mx-auto flex  flex-col place-content-center items-center justify-evenly gap-7  max-md:w-full  lg:w-3/4 ${
@@ -143,7 +172,7 @@ export function Quiz({
           correctQuestions={correctQuestions}
           unAnsweredQuestions={unAnsweredQuestions}
           quizTime={quizTime.current}
-          onCompleted={onCompleted}
+          onCompleted={handleAddToQuizHistory}
         >
           <ActionButtons>
             <Button onclick={() => setIsQuizHistoryOpen(true)}>
@@ -204,7 +233,9 @@ export function Quiz({
           </>
         )}
       {isQuizHistoryOpen && (
-        <QuizHistory quizHistory={quizHistory}>
+        <QuizHistory quizHistory={quizHistory} onRemoveFromQuizHistory={handleRemoveFromQuizHistory}
+        onClearQuizHistory={handleClearQuizHistory}
+        >
           <ActionButtons>
             <Button onclick={onBackToHome}>
               <i className="fa-solid fa-home mr-2 text-xl"></i> Home Page
