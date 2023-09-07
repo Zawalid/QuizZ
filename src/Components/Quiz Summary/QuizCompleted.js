@@ -24,6 +24,7 @@ export function QuizCompleted({
       score,
       quizTime,
     });
+    /* eslint-disable-next-line */
   }, []);
 
   return (

@@ -64,8 +64,6 @@ export default function App() {
     quizStarted,
     retryClickCount,
   );
-  // const [quizHistory, setQuizHistory] = useLocalStorageState("quizHistory", []);
-  // const quizNumber = useRef(quizHistory.length + 1);
 
   const questions = quizData.map((question) => he.decode(question.question));
   let answers = quizData.map((question) => {
@@ -101,18 +99,21 @@ export default function App() {
     setIsSettingsOpen(false);
     if (
       [
-        category,
-        difficulty,
-        questionsNumber,
-        type,
-        easyTime,
-        mediumTime,
-        hardTime,
-        autoStartTimer,
-        enableCorrectAnswerSound,
-        enableIncorrectAnswerSound,
-        enableTimerSound,
-      ].every((setting) => setting === isChanged.current[setting])
+        { name: "category", value: category },
+        { name: "difficulty", value: difficulty },
+        { name: "questionsNumber", value: questionsNumber },
+        { name: "type", value: type },
+        { name: "easyTime", value: easyTime },
+        { name: "mediumTime", value: mediumTime },
+        { name: "hardTime", value: hardTime },
+        { name: "autoStartTimer", value: autoStartTimer },
+        { name: "enableCorrectAnswerSound", value: enableCorrectAnswerSound },
+        {
+          name: "enableIncorrectAnswerSound",
+          value: enableIncorrectAnswerSound,
+        },
+        { name: "enableTimerSound", value: enableTimerSound },
+      ].every((setting) => setting.value === isChanged.current[setting.name])
     ) {
       setIsSettingsSaved(false);
       return;
@@ -149,7 +150,7 @@ export default function App() {
       setEnableIncorrectAnswerSound(
         isChanged.current.enableIncorrectAnswerSound,
       );
-      setEnableTimerSound(isChanged.current);
+      setEnableTimerSound(isChanged.current.enableTimerSound);
     }
     setIsSettingsOpen((so) => !so);
   }
@@ -157,33 +158,6 @@ export default function App() {
     setQuizStarted(false);
     setIsQuizHistoryOpen(false);
   }
-  // function handleAddToQuizHistory({
-  //   totalQuestions,
-  //   correctQuestions,
-  //   incorrectQuestions,
-  //   unAnsweredQuestions,
-  //   score,
-  //   quizTime,
-  // }) {
-  //   setQuizHistory((qh) => [
-  //     ...qh,
-  //     {
-  //       totalQuestions,
-  //       correctQuestions,
-  //       incorrectQuestions,
-  //       unAnsweredQuestions,
-  //       score,
-  //       quizTime,
-  //       quizNumber: quizNumber.current++,
-  //     },
-  //   ]);
-  // }
-  // function handleClearQuizHistory() {
-  //   setQuizHistory([]);
-  // }
-  // function handleRemoveFromQuizHistory(quizNumber) {
-  //   setQuizHistory((qh) => qh.filter((quiz) => quiz.quizNumber !== quizNumber));
-  // }
 
   return (
     <div className="container relative mx-auto grid h-auto min-h-full grid-rows-[36px_1fr] gap-10 px-8  py-6 max-md:px-4">
@@ -213,7 +187,6 @@ export default function App() {
           onBackToHome={handleBackToHome}
           isQuizHistoryOpen={isQuizHistoryOpen}
           setIsQuizHistoryOpen={setIsQuizHistoryOpen}
-        
         />
       ) : (
         <HeroSection>

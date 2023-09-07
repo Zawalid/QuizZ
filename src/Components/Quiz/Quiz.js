@@ -31,7 +31,6 @@ export function Quiz({
   onBackToHome,
   isQuizHistoryOpen,
   setIsQuizHistoryOpen,
-  
 }) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [quizCompleted, setQuizCompleted] = useState(false);
@@ -50,7 +49,14 @@ export function Quiz({
 
   useEffect(() => {
     if (questionTime === 0) handleSkip();
-    if (isAnswered || quizCompleted || isLoading || isTimerPaused) return;
+    if (
+      isAnswered ||
+      quizCompleted ||
+      isLoading ||
+      isTimerPaused ||
+      isQuizHistoryOpen
+    )
+      return;
     const intervalId = setInterval(() => {
       setQuestionTime((qt) => qt - 1);
     }, 1000);
@@ -68,6 +74,7 @@ export function Quiz({
     isLoading,
     isTimerPaused,
     enableTimerSound,
+    isQuizHistoryOpen,
   ]);
   useEffect(() => {
     if (quizCompleted) return;
@@ -99,7 +106,10 @@ export function Quiz({
         questionsTime[quizData[currentQuestion]?.difficulty] || 10,
       );
       setCurrentQuestion((cq) => cq + 1);
-      currentQuestion === questions.length - 1 && setQuizCompleted(true);
+      if (currentQuestion === questions.length - 1) {
+        timerSoundEffect.pause();
+        setQuizCompleted(true);
+      }
     }, 2000);
   }
   function handleRetry() {
@@ -233,8 +243,10 @@ export function Quiz({
           </>
         )}
       {isQuizHistoryOpen && (
-        <QuizHistory quizHistory={quizHistory} onRemoveFromQuizHistory={handleRemoveFromQuizHistory}
-        onClearQuizHistory={handleClearQuizHistory}
+        <QuizHistory
+          quizHistory={quizHistory}
+          onRemoveFromQuizHistory={handleRemoveFromQuizHistory}
+          onClearQuizHistory={handleClearQuizHistory}
         >
           <ActionButtons>
             <Button onclick={onBackToHome}>

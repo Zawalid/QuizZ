@@ -51,9 +51,7 @@ export function Settings({
   setEnableIncorrectAnswerSound,
   enableTimerSound,
   setEnableTimerSound,
-  onClearQuizHistory,
 }) {
-  const [isQuizHistoryCleared, setIsQuizHistoryCleared] = useState(false);
   return (
     <div
       className={

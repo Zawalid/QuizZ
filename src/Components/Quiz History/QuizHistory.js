@@ -10,7 +10,7 @@ export function QuizHistory({
   onRemoveFromQuizHistory,
   onClearQuizHistory,
 }) {
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);  
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [disabledButton, setDisabledButton] = useState(null);
   const theadElement = useRef(null);
@@ -19,17 +19,18 @@ export function QuizHistory({
   const [selectedRange, setSelectedRange] = useState("All Scores");
   const [filteredHistory, setFilteredHistory] = useState(quizHistory);
   const [searchQuery, setSearchQuery] = useState("");
+  const totalPages = useRef(Math.ceil(filteredHistory.length / rowsPerPage));
 
   useEffect(() => {
-    currentPage * rowsPerPage >= quizHistory.length &&
+    currentPage * rowsPerPage >= filteredHistory.length &&
       setDisabledButton("next");
     currentPage === 1 && setDisabledButton("previous");
-    currentPage * rowsPerPage >= quizHistory.length &&
+    currentPage * rowsPerPage >= filteredHistory.length &&
       currentPage === 1 &&
       setDisabledButton("both");
 
     return () => setDisabledButton(null);
-  }, [currentPage, rowsPerPage, quizHistory]);
+  }, [currentPage, rowsPerPage, filteredHistory]);
   useEffect(() => {
     const thead = theadElement.current;
     function callback(e) {
@@ -57,7 +58,15 @@ export function QuizHistory({
     const searchResult = getSearchResult();
     setFilteredHistory(searchResult);
     handleFilter();
+    /* eslint-disable-next-line */
   }, [searchQuery, quizHistory]);
+  useEffect(() => {
+    totalPages.current = Math.ceil(filteredHistory.length / rowsPerPage);
+    if (currentPage > totalPages.current) {
+      handlePreviousPage();
+    }
+    /* eslint-disable-next-line */
+  }, [filteredHistory, rowsPerPage]);
 
   function getSearchResult() {
     const searchResult = quizHistory.filter((quiz) => {
@@ -100,9 +109,9 @@ export function QuizHistory({
         Quiz History
       </h1>
       {quizHistory.length === 0 ? (
-        <div className="w-full px-5 py-10 rounded-xl bg-light-secondary dark:bg-dark-secondary">
-          <h2 className="text-center text-2xl mb-5 font-bold text-light-text dark:text-dark-text">
-          Your Quiz History is Empty
+        <div className="w-full rounded-xl bg-light-secondary px-5 py-10 dark:bg-dark-secondary">
+          <h2 className="mb-5 text-center text-2xl font-bold text-light-text dark:text-dark-text">
+            Your Quiz History is Empty
           </h2>
           <p className="text-center font-semibold text-light-text-2 dark:text-dark-text-2">
             Start a quiz to see your quiz history
@@ -127,7 +136,7 @@ export function QuizHistory({
               <i className="fa-solid fa-trash mr-3"></i> Clear History
             </button>
           </div>
-          <div className="table_container max-h-[550px] w-full overflow-x-auto rounded-xl">
+          <div className="table_container max-h-[520px] w-full overflow-x-auto rounded-xl">
             <table className="w-full table-auto  border-collapse bg-light-secondary  dark:bg-dark-secondary">
               <thead
                 className="sticky top-0 w-full bg-light-secondary text-light-text-2  dark:bg-dark-secondary  dark:text-dark-text-2"
@@ -228,7 +237,8 @@ export function QuizHistory({
             onNextPage={handleNextPage}
             onPreviousPage={handlePreviousPage}
             rowsPerPage={rowsPerPage}
-            quizHistoryLength={quizHistory.length}
+            totalPages={totalPages.current}
+            quizHistoryLength={filteredHistory.length}
             onChangeRowsPerPage={handleRowsPerPageChange}
             disabledButton={disabledButton}
           />
