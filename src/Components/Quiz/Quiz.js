@@ -181,7 +181,6 @@ function Quiz({
         quizNumber: quizNumber.current++,
       },
     ]);
-    console.log(777);
   }
   function handleClearQuizHistory() {
     setQuizHistory([]);

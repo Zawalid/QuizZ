@@ -64,7 +64,7 @@ export function QuizHistory({
     totalPages.current = Math.ceil(filteredHistory.length / rowsPerPage);
     currentPage > totalPages.current && handlePreviousPage();
     /* eslint-disable-next-line */
-  }, [filteredHistory, rowsPerPage,currentPage]);
+  }, [filteredHistory, rowsPerPage, currentPage]);
 
   function getSearchResult() {
     const searchResult = quizHistory.filter((quiz) => {
@@ -230,16 +230,21 @@ export function QuizHistory({
               </tbody>
             </table>
           </div>
-          <Pagination
-            currentPage={currentPage}
-            onNextPage={handleNextPage}
-            onPreviousPage={handlePreviousPage}
-            rowsPerPage={rowsPerPage}
-            totalPages={totalPages.current}
-            quizHistoryLength={filteredHistory.length}
-            onChangeRowsPerPage={handleRowsPerPageChange}
-            disabledButton={disabledButton}
-          />
+          {filteredHistory.length === 0 ? (
+            <p className="text-center text-light-text dark:text-dark-text mt-4 font-bold">
+              No Quiz Found
+            </p>
+          ) : (
+            <Pagination
+              currentPage={currentPage}
+              onNextPage={handleNextPage}
+              onPreviousPage={handlePreviousPage}
+              rowsPerPage={rowsPerPage}
+              quizHistoryLength={filteredHistory.length}
+              onChangeRowsPerPage={handleRowsPerPageChange}
+              disabledButton={disabledButton}
+            />
+          )}
         </div>
       )}
       {children}

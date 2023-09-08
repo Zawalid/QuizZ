@@ -2,7 +2,6 @@ export function Pagination({
   currentPage,
   onNextPage,
   onPreviousPage,
-  totalPages,
   rowsPerPage,
   quizHistoryLength,
   onChangeRowsPerPage,
@@ -26,11 +25,11 @@ export function Pagination({
         </select>
         <span className="flex gap-1 text-sm text-light-text-2 dark:text-dark-text-2">
           <span className="font-semibold text-light-text dark:text-dark-text">
-            {quizHistoryLength === 0 ? 0 : currentPage}
+            { currentPage}
           </span>
           of
           <span className="font-semibold text-light-text dark:text-dark-text">
-            {totalPages}
+            {Math.ceil(quizHistoryLength / rowsPerPage) }
           </span>
         </span>
       </div>
