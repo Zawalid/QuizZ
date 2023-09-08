@@ -1,4 +1,4 @@
-import  {memo, useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import he from "he";
 import { QuizCompleted } from "../Quiz Summary/QuizCompleted";
 import { QuizHistory } from "../Quiz History/QuizHistory";
@@ -13,7 +13,7 @@ import { useLocalStorageState } from "../useLocalStorageState";
 
 const correctAnswerSoundEffect = new Audio(correctAnswer);
 const incorrectAnswerSoundEffect = new Audio(incorrectAnswer);
- function Quiz({
+function Quiz({
   quizStarted,
   setQuizStarted,
   quizData,
@@ -46,6 +46,17 @@ const incorrectAnswerSoundEffect = new Audio(incorrectAnswer);
   const quizTime = useRef(0);
   const [quizHistory, setQuizHistory] = useLocalStorageState("quizHistory", []);
   const quizNumber = useRef(quizHistory.length + 1);
+  const [isAddedToHistory, setIsAddedToHistory] = useState(false);
+
+  const totalQuestions = questions.length;
+  const incorrectQuestions =
+    totalQuestions - correctQuestions - unAnsweredQuestions;
+  const score = Math.round((correctQuestions / totalQuestions) * 100);
+
+  const correctAnswer =
+    !quizCompleted &&
+    quizData.length > 0 &&
+    he.decode(quizData[currentQuestion]?.correct_answer);
 
   useEffect(() => {
     if (questionTime === 0) handleSkip();
@@ -83,11 +94,20 @@ const incorrectAnswerSoundEffect = new Audio(incorrectAnswer);
     }, 1000);
     return () => clearInterval(intervalId);
   }, [quizCompleted]);
-
-  const correctAnswer =
-    !quizCompleted &&
-    quizData.length > 0 &&
-    he.decode(quizData[currentQuestion]?.correct_answer);
+  useEffect(() => {
+    if (quizCompleted && !isAddedToHistory) {
+      handleAddToQuizHistory({
+        totalQuestions,
+        correctQuestions,
+        incorrectQuestions,
+        unAnsweredQuestions,
+        score,
+        quizTime: quizTime.current,
+      });
+      setIsAddedToHistory(true);
+    }
+    // eslint-disable-next-line
+  }, [quizCompleted, isAddedToHistory]);
 
   function handleAnswer(answer) {
     if (answer === correctAnswer) {
@@ -106,7 +126,7 @@ const incorrectAnswerSoundEffect = new Audio(incorrectAnswer);
         questionsTime[quizData[currentQuestion]?.difficulty] || 10,
       );
       setCurrentQuestion((cq) => cq + 1);
-      if (currentQuestion === questions.length - 1) {
+      if (currentQuestion === totalQuestions - 1) {
         timerSoundEffect.pause();
         setQuizCompleted(true);
       }
@@ -123,18 +143,19 @@ const incorrectAnswerSoundEffect = new Audio(incorrectAnswer);
     setIsHintUsed(false);
     setIsTimerPaused(!autoStartTimer);
     quizTime.current = 0;
+    setIsAddedToHistory(false);
   }
   function handleSkip() {
     setUnAnsweredQuestions((uaq) => uaq + 1);
     setCurrentQuestion((cq) => cq + 1);
-    currentQuestion === questions.length - 1 && setQuizCompleted(true);
+    currentQuestion === totalQuestions - 1 && setQuizCompleted(true);
     setIsHintUsed(false);
     setQuestionTime(questionsTime[quizData[currentQuestion]?.difficulty] || 10);
     setIsTimerPaused(!autoStartTimer);
   }
   function handleEndQuiz() {
     setQuizCompleted(true);
-    setUnAnsweredQuestions((uaq) => uaq + questions.length - currentQuestion);
+    setUnAnsweredQuestions((uaq) => uaq + totalQuestions - currentQuestion);
     setQuestionTime(questionsTime[quizData[currentQuestion]?.difficulty] || 10);
   }
   function handlePause() {

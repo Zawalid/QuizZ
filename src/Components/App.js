@@ -158,7 +158,6 @@ export default function App() {
     setQuizStarted(false);
     setIsQuizHistoryOpen(false);
   }
-  const settings = useRef(null);
 
   return (
     <div className="container relative mx-auto grid h-auto min-h-full grid-rows-[36px_1fr] gap-10 px-8  py-6 max-md:px-4">
@@ -227,7 +226,6 @@ export default function App() {
         setEnableIncorrectAnswerSound={setEnableIncorrectAnswerSound}
         enableTimerSound={enableTimerSound}
         setEnableTimerSound={setEnableTimerSound}
-        
       >
         <Button onclick={handleSave}>
           <i className="fa-regular fa-floppy-disk mr-4 text-xl"></i>

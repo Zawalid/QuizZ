@@ -1,4 +1,3 @@
-import {  useEffect } from "react";
 import { Summary } from "./Summary";
 import { ScoreMessage } from "./ScoreMessage";
 
@@ -9,23 +8,10 @@ export function QuizCompleted({
   correctQuestions,
   unAnsweredQuestions,
   quizTime,
-  onCompleted,
 }) {
   const incorrectQuestions =
     totalQuestions - correctQuestions - unAnsweredQuestions;
   const score = Math.round((correctQuestions / totalQuestions) * 100);
-
-  useEffect(() => {
-    onCompleted({
-      totalQuestions,
-      correctQuestions,
-      incorrectQuestions,
-      unAnsweredQuestions,
-      score,
-      quizTime,
-    });
-    /* eslint-disable-next-line */
-  }, []);
 
   return (
     <>
@@ -42,4 +28,3 @@ export function QuizCompleted({
     </>
   );
 }
-
