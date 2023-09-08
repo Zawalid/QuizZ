@@ -1,4 +1,3 @@
-import React from "react";
 
 export function Summary({
   totalQuestions,
@@ -73,3 +72,4 @@ export function getTime(quizTime) {
 
   return { quizTimeHours, quizTimeMinutes, quizTimeSeconds };
 }
+

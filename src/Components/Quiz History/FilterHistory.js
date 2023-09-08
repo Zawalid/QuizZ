@@ -9,11 +9,11 @@ export const scoreRanges = [
 
 export function FilterHistory({ selectedRange, onSelect, onFilter }) {
   return (
-    <div className="flex items-center justify-center gap-3">
+    <div className="flex items-center justify-center gap-3 ">
       <div className="relative w-full">
-        <i className="fas fa-filter absolute left-2 top-3 text-light-text-2 dark:text-dark-text-2"></i>
+        <i className="fas fa-filter absolute left-3 top-3 text-light-text-2 dark:text-dark-text-2"></i>
         <select
-          className="w-full rounded-lg bg-light-secondary px-8 py-2 text-light-text focus:outline-none  dark:bg-dark-secondary dark:text-dark-text
+          className="w-full rounded-lg bg-light-secondary px-10 py-2 text-light-text focus:outline-none cursor-pointer dark:bg-dark-secondary dark:text-dark-text
     "
           value={selectedRange}
           onChange={onSelect}
@@ -24,8 +24,7 @@ export function FilterHistory({ selectedRange, onSelect, onFilter }) {
             </option>
           ))}
         </select>
-
-        <i className="fas fa-chevron-down absolute right-2 top-3 text-light-text-2 dark:text-dark-text-2"></i>
+       
       </div>
       <button
         className="rounded-lg bg-light-secondary px-4 py-2 text-light-text dark:bg-dark-secondary dark:text-dark-text"

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import {  useEffect } from "react";
 import { Summary } from "./Summary";
 import { ScoreMessage } from "./ScoreMessage";
 
@@ -42,3 +42,4 @@ export function QuizCompleted({
     </>
   );
 }
+

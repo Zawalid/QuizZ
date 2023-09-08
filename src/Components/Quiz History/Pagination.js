@@ -15,7 +15,7 @@ export function Pagination({
           Rows per page:
         </span>
         <select
-          className="rounded-lg border-none bg-light-secondary px-3 py-1.5 text-sm text-light-text-2 focus:outline-none dark:bg-dark-secondary dark:text-dark-text-2"
+          className="rounded-lg border-none bg-light-secondary px-3 py-1.5 text-sm text-light-text-2 focus:outline-none cursor-pointer dark:bg-dark-secondary dark:text-dark-text-2"
           value={rowsPerPage}
           onChange={onChangeRowsPerPage}
         >

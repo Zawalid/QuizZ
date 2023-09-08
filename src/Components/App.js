@@ -4,7 +4,7 @@ import { nanoid } from "nanoid";
 
 import timer from "../Assets/sounds/timer-sound.mp3";
 import { Settings } from "./Settings/Settings";
-import { Quiz } from "./Quiz/Quiz";
+import { MemoizedQuiz } from "./Quiz/Quiz";
 import { Header, SettingsButton } from "./Header";
 import { HeroSection } from "./HeroSection";
 import { useSettings } from "./Settings/useSettings";
@@ -158,6 +158,7 @@ export default function App() {
     setQuizStarted(false);
     setIsQuizHistoryOpen(false);
   }
+  const settings = useRef(null);
 
   return (
     <div className="container relative mx-auto grid h-auto min-h-full grid-rows-[36px_1fr] gap-10 px-8  py-6 max-md:px-4">
@@ -168,7 +169,7 @@ export default function App() {
         />
       </Header>
       {quizStarted || isQuizHistoryOpen ? (
-        <Quiz
+        <MemoizedQuiz
           quizStarted={quizStarted}
           setQuizStarted={setQuizStarted}
           quizData={quizData}
@@ -191,13 +192,13 @@ export default function App() {
       ) : (
         <HeroSection>
           <ActionButtons>
-            <Button onclick={() => setIsQuizHistoryOpen(true)}>
-              <i className="fa-solid fa-clock-rotate-left mr-2 text-xl"></i>{" "}
-              Quiz History
-            </Button>
             <Button onclick={() => setQuizStarted(true)}>
               <i className="fa-solid fa-play mr-4 text-xl"></i>
               Start Quiz
+            </Button>
+            <Button onclick={() => setIsQuizHistoryOpen(true)}>
+              <i className="fa-solid fa-clock-rotate-left mr-2 text-xl"></i>{" "}
+              Quiz History
             </Button>
           </ActionButtons>
         </HeroSection>
@@ -226,6 +227,7 @@ export default function App() {
         setEnableIncorrectAnswerSound={setEnableIncorrectAnswerSound}
         enableTimerSound={enableTimerSound}
         setEnableTimerSound={setEnableTimerSound}
+        
       >
         <Button onclick={handleSave}>
           <i className="fa-regular fa-floppy-disk mr-4 text-xl"></i>

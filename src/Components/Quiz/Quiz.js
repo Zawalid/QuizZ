@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import  {memo, useEffect, useRef, useState } from "react";
 import he from "he";
 import { QuizCompleted } from "../Quiz Summary/QuizCompleted";
 import { QuizHistory } from "../Quiz History/QuizHistory";
@@ -13,7 +13,7 @@ import { useLocalStorageState } from "../useLocalStorageState";
 
 const correctAnswerSoundEffect = new Audio(correctAnswer);
 const incorrectAnswerSoundEffect = new Audio(incorrectAnswer);
-export function Quiz({
+ function Quiz({
   quizStarted,
   setQuizStarted,
   quizData,
@@ -140,7 +140,6 @@ export function Quiz({
   function handlePause() {
     setIsTimerPaused((itp) => !itp);
   }
-
   function handleAddToQuizHistory({
     totalQuestions,
     correctQuestions,
@@ -161,9 +160,11 @@ export function Quiz({
         quizNumber: quizNumber.current++,
       },
     ]);
+    console.log(777);
   }
   function handleClearQuizHistory() {
     setQuizHistory([]);
+    quizNumber.current = 1;
   }
   function handleRemoveFromQuizHistory(quizNumber) {
     setQuizHistory((qh) => qh.filter((quiz) => quiz.quizNumber !== quizNumber));
@@ -174,7 +175,7 @@ export function Quiz({
         isQuizHistoryOpen ? " overflow-hidden" : ""
       }`}
     >
-      {isLoading && <Loading />}
+      {isLoading && !isQuizHistoryOpen && !quizCompleted && <Loading />}
       {error && <Error>{error}</Error>}
       {!error && !isLoading && !isQuizHistoryOpen && quizCompleted && (
         <QuizCompleted
@@ -297,3 +298,5 @@ function Error({ children }) {
     </h1>
   );
 }
+
+export const MemoizedQuiz = memo(Quiz);

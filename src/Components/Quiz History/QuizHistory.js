@@ -10,7 +10,7 @@ export function QuizHistory({
   onRemoveFromQuizHistory,
   onClearQuizHistory,
 }) {
-  const [currentPage, setCurrentPage] = useState(1);  
+  const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [disabledButton, setDisabledButton] = useState(null);
   const theadElement = useRef(null);
@@ -62,11 +62,9 @@ export function QuizHistory({
   }, [searchQuery, quizHistory]);
   useEffect(() => {
     totalPages.current = Math.ceil(filteredHistory.length / rowsPerPage);
-    if (currentPage > totalPages.current) {
-      handlePreviousPage();
-    }
+    currentPage > totalPages.current && handlePreviousPage();
     /* eslint-disable-next-line */
-  }, [filteredHistory, rowsPerPage]);
+  }, [filteredHistory, rowsPerPage,currentPage]);
 
   function getSearchResult() {
     const searchResult = quizHistory.filter((quiz) => {
@@ -268,9 +266,9 @@ function TableRow({ quiz, onRemoveFromQuizHistory }) {
       <td className="p-3">{unAnsweredQuestions}</td>
       <td className="p-3">{score}%</td>
       <td className="whitespace-nowrap p-3">
-        {quizTimeHours > 10 ? quizTimeHours : `0${quizTimeHours} : `}
-        {quizTimeMinutes > 10 ? quizTimeMinutes : `0${quizTimeMinutes} : `}
-        {quizTimeSeconds > 10 ? quizTimeSeconds : `0${quizTimeSeconds}`}
+        {quizTimeHours >= 10 ? quizTimeHours : `0${quizTimeHours} : `}
+        {quizTimeMinutes >= 10 ? quizTimeMinutes : `0${quizTimeMinutes} : `}
+        {quizTimeSeconds >= 10 ? quizTimeSeconds : `0${quizTimeSeconds}`}
       </td>
       <td className="p-3">
         <button
