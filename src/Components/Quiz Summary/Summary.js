@@ -55,7 +55,7 @@ export function Summary({
         <i className="fa-solid fa-hourglass-start  text-2xl text-light-text-2 dark:text-dark-text-2"></i>
         <span className="text-xl font-bold text-light-text-2 dark:text-dark-text-2">
           {`${quizTimeHours > 0 ? quizTimeHours + "h" : ""} ${
-            quizTimeMinutes > 0 ? quizTimeMinutes + "h" : ""
+            quizTimeMinutes > 0 ? quizTimeMinutes + "m" : ""
           } ${quizTimeSeconds}s`}
         </span>
         <i className="fa-solid fa-hourglass-end  text-2xl text-light-text-2 dark:text-dark-text-2"></i>
