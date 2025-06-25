@@ -1,70 +1,82 @@
-# Getting Started with Create React App
+<div align="center">
+  <br />
+  <h1 align="center">🧠 QuizZ</h1>
+  <p align="center">
+This was my first React project: An interactive quiz application built to master core concepts, featuring customizable trivia, persistent history, and dynamic state management.
+  </p>
+  <br />
+</div>
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+<div align="center">
+  <!-- Status Badge -->
+  <img alt="Status" src="https://img.shields.io/badge/Status-Completed-blue"/>
+  <!-- Tech Badges -->
+  <img alt="React" src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB"/>
+  <img alt="JavaScript" src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black"/>
+  <img alt="Tailwind CSS" src="https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white"/>
+  <img alt="Create React App" src="https://img.shields.io/badge/CRA-09D3AC?style=for-the-badge&logo=createreactapp&logoColor=black"/>
+</div>
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+### **📌 Table of Contents**
+* [✨ Core Features](#-core-features)
+* [🧰 Technology Stack](#-technology-stack)
+* [📸 Screenshots](#-screenshots)
+* [📨 Get In Touch](#-get-in-touch)
 
-### `npm start`
+---
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### **✨ Core Features**
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+| Feature                   | Description                                                                                                                                                                 |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ⚙️ **Dynamic Quiz Generation**  | Configure quizzes by category, difficulty, number of questions, and type (multiple choice/true-false), all fetched live from the **Open Trivia Database API**.             |
+| ⏱️ **Interactive Gameplay**      | Features a question timer with pause/play functionality, a limited number of hints per quiz, a visual progress bar, and sound effects to create an engaging experience. |
+| 🗂️ **Persistent Quiz History**  | Automatically saves all quiz results to **Local Storage**. Users can browse, filter by score range, and search their entire quiz history at any time.                    |
+| 🔧 **Customizable Experience**  | A comprehensive settings panel allows users to fine-tune the experience by adjusting question times for each difficulty and enabling or disabling various audio cues.    |
+| 📊 **Detailed Summary**        | After each quiz, a detailed summary screen displays the final score, total time taken, and a breakdown of correct, incorrect, and unanswered questions.                |
+| 📦 **Installable PWA**          | A Progressive Web App that can be installed on mobile devices or desktops for a native-like, offline-ready experience.                                                    |
 
-### `npm test`
+---
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### **🧰 Technology Stack**
 
-### `npm run build`
+This project is a client-side application built with a focus on core React principles and a clean user experience.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+| Category               | Technologies & Services                                                                                                                                                                                                                         |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Core Framework**     | <img src="https://skillicons.dev/icons?i=react" alt="React" width="24" style="vertical-align: middle; margin-right: 5px;"> **React** for building a dynamic, component-based user interface.                                                        |
+| **State Management**   | Core **React Hooks** (`useState`, `useEffect`, `useRef`) for managing component and application state, with a custom `useLocalStorageState` hook for persisting settings and history. |
+| **Styling**            | <img src="https://skillicons.dev/icons?i=tailwind" alt="Tailwind CSS" width="24" style="vertical-align: middle; margin-right: 5px;"> **Tailwind CSS** for a modern, utility-first styling workflow.                                                    |
+| **Data Fetching**      | A custom `useFetchQuiz` hook utilizing the native **Fetch API** to retrieve questions from the public **Open Trivia Database API**.                                                                                                                |
+| **Build Tool & Setup** | <img src="https://skillicons.dev/icons?i=react" alt="Create React App" width="24" style="vertical-align: middle; margin-right: 5px;"> **Create React App** for the project setup, development server, and optimized production builds.                     |
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### **📸 Screenshots**
 
-### `npm run eject`
+*(Note: Replace these placeholder links with actual paths to your screenshots in the repository.)*
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+<p align="center">
+  <img src="./path/to/hero-screen.png" alt="QuizZ Home Screen" width="85%">
+  <br>
+  <em>The main landing page of the QuizZ application.</em>
+</p>
+<br>
+<p align="center">
+  <img src="./path/to/quiz-in-progress.png" alt="Quiz In Progress" width="85%">
+  <br>
+  <em>The interactive quiz interface, showing the question, answers, timer, and progress bar.</em>
+</p>
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+---
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### **📨 Get In Touch**
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Let's connect! I'm always open to discussing new projects, creative ideas, or opportunities to be part of an amazing team.
 
-## Learn More
+**Walid Zakan**
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+-   **📧 Email**: [walid.zakan@gmail.com](mailto:walid.zakan@gmail.com)
+-   **💼 LinkedIn**: [linkedin.com/in/walid-zakan](https://www.linkedin.com/in/walid-zakan)
